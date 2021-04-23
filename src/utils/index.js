@@ -1,4 +1,5 @@
 import { computed } from 'vue'
+import { ORDER } from '@/interface/enum'
 
 export function getStateRef (obj, key) {
   return computed({
@@ -22,4 +23,14 @@ export function twoWayBinding (props, ctx) {
       ctx.emit('update:modelValue', val)
     }
   })
+}
+
+export function getOrderOptions () {
+  return [{
+    value: ORDER.BEFORE,
+    label: '之前'
+  }, {
+    value: ORDER.AFTER,
+    label: '之后'
+  }]
 }

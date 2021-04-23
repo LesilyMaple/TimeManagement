@@ -1,10 +1,7 @@
 <template>
   <div id="start">
     <div>
-      <TaskType
-        :options="options"
-        :type="type"
-      />
+      <TaskType v-model="taskType" />
       <el-input
         placeholder="任务名称"
         v-model="name"
@@ -55,10 +52,7 @@ export default {
   setup () {
     const router = useRouter()
 
-    const options = [{
-      value: 'a',
-      label: 'A'
-    }]
+    const taskType = ref([])
 
     /*
     *  Note:
@@ -92,7 +86,7 @@ export default {
     }
 
     return {
-      options,
+      taskType,
       name,
       type,
       subTasks,

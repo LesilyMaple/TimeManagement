@@ -3,22 +3,16 @@
     <div>
       <div>
         <TaskType
-          v-if="isModifying"
           v-model="rule.bannedTaskType"
+          :readonly="!isModifying"
         />
-        <div v-else>
-          {{ rule.bannedTaskType }}
-        </div>
         <span>禁止在</span>
       </div>
       <div>
         <TaskType
-          v-if="isModifying"
           v-model="rule.basedTaskType"
+          :readonly="!isModifying"
         />
-        <div v-else>
-          {{ rule.basedTaskType }}
-        </div>
         <el-select
           v-if="isModifying"
           v-model="rule.order"
@@ -32,7 +26,7 @@
           />
         </el-select>
         <div v-else>
-          {{ showOrder(order) }}
+          {{ showOrder(rule.order) }}
         </div>
       </div>
     </div>
@@ -40,18 +34,19 @@
       <el-button
         v-if="isModifying"
         size="mini"
-        @click="confirmModify"
+        @click="modify"
       >
         确认
       </el-button>
       <el-button
         v-else
         size="mini"
-        @click="modify"
+        @click="isModifying=true"
       >
         修改
       </el-button>
       <el-button
+        v-if="!isModifying"
         size="mini"
         @click="remove"
       >
@@ -62,10 +57,10 @@
 </template>
 
 <script>
-import { ORDER } from '@/interface/enum'
 import { ref } from 'vue'
 import { useStore } from 'vuex'
 import TaskType from '@/components/TaskType'
+import { getOrderOptions } from '@/utils'
 
 export default {
   name: 'OrderRuleItem',
@@ -75,35 +70,37 @@ export default {
   props: {
     data: {
       type: Object,
-      required: true
+      default: () => ({
+        bannedTaskType: [],
+        basedTaskType: [],
+        order: 0
+      })
+    },
+    readonly: {
+      type: Boolean,
+      default: true
     }
   },
-  emits: ['remove'],
+  emits: ['remove', 'added'],
   setup (props, ctx) {
     const store = useStore()
 
     // 可以绕过禁止修改属性的机制
     const rule = props.data
 
-    const orderOptions = [{
-      value: ORDER.BEFORE,
-      label: '之前'
-    }, {
-      value: ORDER.AFTER,
-      label: '之后'
-    }]
-
-    const isModifying = ref(false)
+    const isModifying = ref(!props.readonly)
 
     const modify = () => {
-      isModifying.value = true
-    }
-
-    const confirmModify = () => {
       isModifying.value = false
-      store.dispatch('orderRule/update', rule)
+      if (rule.id === undefined) {
+        store.dispatch('orderRule/add', rule)
+        ctx.emit('added')
+      } else {
+        store.dispatch('orderRule/update', rule)
+      }
     }
 
+    const orderOptions = getOrderOptions()
     const showOrder = (order) => {
       for (const orderOption of orderOptions) {
         if (orderOption.value === order) return orderOption.label
@@ -111,7 +108,7 @@ export default {
     }
 
     const remove = () => {
-      ctx.emit('remove')
+      ctx.emit('remove', rule.id)
     }
 
     return {
@@ -119,7 +116,6 @@ export default {
       orderOptions,
       isModifying,
       modify,
-      confirmModify,
       showOrder,
       remove
     }

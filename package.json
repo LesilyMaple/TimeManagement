@@ -14,7 +14,7 @@
   "main": "background.js",
   "dependencies": {
     "axios": "^0.21.1",
-    "core-js": "^3.10.2",
+    "core-js": "^3.11.0",
     "element-plus": "^1.0.2-beta.40",
     "konva": "^7.2.5",
     "vue": "^3.0.11",

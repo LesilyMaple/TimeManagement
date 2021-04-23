@@ -7,7 +7,7 @@ const state = () => ({
 
 const mutations = {
   init (state, data) {
-    state.data = data
+    state.data.push(...data)
   },
   add (state, payload) {
     state.data.push(payload)
@@ -43,6 +43,9 @@ const actions = {
       })
   },
   add ({ commit }, payload) {
+    const { bannedTaskType, basedTaskType } = payload
+    payload.bannedTaskType = bannedTaskType.pop()
+    payload.basedTaskType = basedTaskType.pop()
     axios.post(addUrl, payload)
       .then(response => {
         if (response.status === 200) {

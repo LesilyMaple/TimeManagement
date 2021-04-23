@@ -7,9 +7,7 @@ const state = () => ({
     name: 'root',
     children: []
   },
-  options: {
-    value: []
-  }
+  options: []
 })
 
 const mutations = {
@@ -18,12 +16,18 @@ const mutations = {
     this.commit('taskType/update')
   },
 
-  updateName (state, { type, name }) {
+  updateName (state, {
+    type,
+    name
+  }) {
     type.name = name
     this.commit('taskType/update')
   },
 
-  removeType (state, { parent, type }) {
+  removeType (state, {
+    parent,
+    type
+  }) {
     for (let i = 0; i < parent.children.length; i++) {
       if (parent.children[i] === type) {
         parent.children.splice(i, 1)
@@ -32,15 +36,19 @@ const mutations = {
     this.commit('taskType/update')
   },
 
-  addType (state, { parent, type }) {
+  addType (state, {
+    parent,
+    type
+  }) {
     parent.children.push(type)
     this.commit('taskType/update')
   },
 
   update (state) {
-    state.options.value = JSON.parse(JSON.stringify(state.data.children)
+    state.options.push(...JSON.parse(JSON.stringify(state.data.children)
       .replace(/name/g, 'label')
       .replace(/id/g, 'value'))
+    )
   }
 }
 
@@ -54,44 +62,61 @@ const actions = {
       })
   },
 
-  updateName ({ commit }, { type, name }) {
+  updateName ({ commit }, {
+    type,
+    name
+  }) {
     axios.post(updateNameUrl, {
       id: type.id,
       name: name
     })
       .then(response => {
         if (response.status === 200) {
-          commit('updateName', { type, name })
+          commit('updateName', {
+            type,
+            name
+          })
         }
       })
   },
 
-  removeType ({ commit }, { parent, type }) {
+  removeType ({ commit }, {
+    parent,
+    type
+  }) {
     axios.post(removeUrl, {
       id: type.id
     })
       .then(response => {
         if (response.status === 200) {
-          commit('removeType', { parent, type })
+          commit('removeType', {
+            parent,
+            type
+          })
         }
       })
   },
 
-  addType ({ commit }, { parent, name }) {
+  addType ({ commit }, {
+    parent,
+    name
+  }) {
     axios.post(addUrl, {
       planTypeEntity: { name: name },
       parent_id: parent.id
     })
       .then(response => {
         if (response.status === 200) {
-          console.log(response.data)
           const type = {
             id: response.data,
             name: name,
             children: []
           }
 
-          commit('addType', { parent, type })
+          commit('addType', {
+            parent,
+            type
+          })
         }
       })
   }

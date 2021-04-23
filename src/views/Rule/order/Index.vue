@@ -6,12 +6,23 @@
       :data="item"
       @remove="remove"
     />
+    <Item
+      v-if="isAdding"
+      :readonly="false"
+      @added="isAdding=false"
+    />
+    <el-button
+      @click="isAdding=true"
+      icon="el-icon-plus"
+      size="mini"
+    />
   </div>
 </template>
 
 <script>
 import { useStore } from 'vuex'
 import Item from './Item'
+import { ref } from 'vue'
 
 export default {
   name: 'OrderRule',
@@ -23,13 +34,15 @@ export default {
 
     const data = store.state.orderRule.data
 
+    const isAdding = ref(false)
+
     const remove = () => {
-      console.log('remove')
     }
 
     return {
       data,
-      remove
+      remove,
+      isAdding
     }
   }
 }

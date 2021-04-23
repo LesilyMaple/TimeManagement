@@ -85,6 +85,6 @@ export default {
 
 <style lang="less" scoped>
 #task-type{
-  width: 200px;
+  width: 400px;
 }
 </style>
