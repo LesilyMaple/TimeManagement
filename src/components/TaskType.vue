@@ -42,7 +42,6 @@ export default {
     const data = twoWayBinding(props, ctx)
 
     const getTaskTypeNameByIds = (idArr) => {
-      console.log(idArr)
       const nameArr = []
       let idPointer = 0
 

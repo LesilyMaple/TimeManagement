@@ -6,7 +6,7 @@ import Finish from '@/views/Task/components/Finish/Index'
 import Statistics from '@/views/Statistics/Index'
 import Plan from '@/views/Plan/Index'
 import Reward from '@/views/Reward/Index'
-import Rule from '@/views/Rule/Index'
+import Rule from '@/views/Rule/components/Index'
 import Settings from '@/views/Settings/Index'
 
 const routes = [

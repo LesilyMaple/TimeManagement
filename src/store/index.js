@@ -4,6 +4,8 @@ import currentTask from './currentTask'
 import statistics from './statistics'
 import limitedPlanDay from './plan/limitedPlan/day'
 import orderRule from './rule/order'
+import timeRule from './rule/time'
+import frequencyRule from './rule/frequency'
 
 export default createStore({
   modules: {
@@ -11,6 +13,8 @@ export default createStore({
     currentTask,
     statistics,
     limitedPlanDay,
-    orderRule
+    orderRule,
+    timeRule,
+    frequencyRule
   }
 })

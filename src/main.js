@@ -6,10 +6,14 @@ import installElementPlus from './plugins/element'
 import MainMgr from '@/store/MainMgr'
 
 const app = createApp(App)
+
 installElementPlus(app)
 
 store.dispatch('taskType/init')
 store.dispatch('orderRule/init')
+store.dispatch('timeRule/init')
+store.dispatch('frequencyRule/init')
+
 MainMgr.init()
 
 app.use(store).use(router).mount('#app')

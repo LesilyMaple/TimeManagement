@@ -43,7 +43,7 @@
         </el-menu-item>
       </div>
       <div>
-        <el-menu-item index="Settings">
+        <el-menu-item index="/settings">
           <i class="el-icon-setting" />
           <template #title>
             设置

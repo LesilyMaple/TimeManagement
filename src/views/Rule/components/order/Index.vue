@@ -4,12 +4,13 @@
       v-for="item in data"
       :key="item"
       :data="item"
-      @remove="remove"
+      @remove="remove($event)"
     />
     <Item
       v-if="isAdding"
       :readonly="false"
       @added="isAdding=false"
+      @cancel="isAdding=false"
     />
     <el-button
       @click="isAdding=true"
@@ -36,7 +37,8 @@ export default {
 
     const isAdding = ref(false)
 
-    const remove = () => {
+    const remove = (ruleId) => {
+      store.dispatch('orderRule/remove', ruleId)
     }
 
     return {

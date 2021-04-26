@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getUrl, addUrl, removeUrl, updateUrl } from '@/api/rule/order'
+import { getUrl, addUrl, removeUrl, updateUrl } from '@/api/rule/frequency'
 
 const state = () => ({
   data: []
@@ -24,9 +24,10 @@ const mutations = {
     for (let i = 0; i < state.data.length; i++) {
       const item = state.data[i]
       if (item.id === rule.id) {
-        item.bannedTaskType = rule.bannedTaskType
-        item.basedTaskType = rule.basedTaskType
-        item.order = rule.order
+        item.taskType = rule.taskType
+        item.min = rule.min
+        item.max = rule.max
+        item.time = rule.time
         return
       }
     }
@@ -35,33 +36,31 @@ const mutations = {
 
 const actions = {
   init ({ commit }) {
-    axios(getUrl)
-      .then(response => {
-        if (response.status === 200) {
-          commit('init', response.data)
-        }
-      })
+    axios(getUrl).then(res => {
+      if (res.status === 200) {
+        commit('init', res.data)
+      }
+    })
   },
   add ({ commit }, rule) {
-    axios.post(addUrl, rule)
-      .then(response => {
-        if (response.status === 200) {
-          commit('add', { id: response.data, ...rule })
-        }
-      })
+    axios.post(addUrl, rule).then(res => {
+      if (res.status === 200) {
+        commit('add', { id: res.data, ...rule })
+      }
+    })
   },
   remove ({ commit }, id) {
     axios.post(removeUrl, { id })
-      .then(response => {
-        if (response.status === 200) {
+      .then(res => {
+        if (res.status === 200) {
           commit('remove', id)
         }
       })
   },
   update ({ commit }, rule) {
     axios.post(updateUrl, rule)
-      .then(response => {
-        if (response.status === 200) {
+      .then(res => {
+        if (res.status === 200) {
           commit('update', rule)
         }
       })

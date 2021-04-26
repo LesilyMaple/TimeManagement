@@ -33,22 +33,29 @@
     <div>
       <el-button
         v-if="isModifying"
-        size="mini"
         @click="modify"
+        size="mini"
       >
         确认
       </el-button>
       <el-button
         v-else
-        size="mini"
         @click="isModifying=true"
+        size="mini"
       >
         修改
       </el-button>
       <el-button
-        v-if="!isModifying"
+        v-if="isModifying"
+        @click="cancel"
         size="mini"
+      >
+        取消
+      </el-button>
+      <el-button
+        v-else
         @click="remove"
+        size="mini"
       >
         删除
       </el-button>
@@ -57,7 +64,7 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import TaskType from '@/components/TaskType'
 import { getOrderOptions } from '@/utils'
@@ -70,7 +77,7 @@ export default {
   props: {
     data: {
       type: Object,
-      default: () => ({
+      default: () => reactive({
         bannedTaskType: [],
         basedTaskType: [],
         order: 0
@@ -81,14 +88,23 @@ export default {
       default: true
     }
   },
-  emits: ['remove', 'added'],
+  emits: ['remove', 'added', 'cancel'],
   setup (props, ctx) {
     const store = useStore()
 
-    // 可以绕过禁止修改属性的机制
     const rule = props.data
+    /* question */
+    // 数组类型要用对象取出来才有响应性--用reactive不好使
+    // 基本类型要用ref才有响应性--用对象不好使
 
     const isModifying = ref(!props.readonly)
+
+    const orderOptions = getOrderOptions()
+    const showOrder = (order) => {
+      for (const orderOption of orderOptions) {
+        if (orderOption.value === order) return orderOption.label
+      }
+    }
 
     const modify = () => {
       isModifying.value = false
@@ -99,16 +115,12 @@ export default {
         store.dispatch('orderRule/update', rule)
       }
     }
-
-    const orderOptions = getOrderOptions()
-    const showOrder = (order) => {
-      for (const orderOption of orderOptions) {
-        if (orderOption.value === order) return orderOption.label
-      }
-    }
-
     const remove = () => {
       ctx.emit('remove', rule.id)
+    }
+    const cancel = () => {
+      isModifying.value = false
+      ctx.emit('cancel')
     }
 
     return {
@@ -117,7 +129,8 @@ export default {
       isModifying,
       modify,
       showOrder,
-      remove
+      remove,
+      cancel
     }
   }
 }

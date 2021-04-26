@@ -1,15 +1,21 @@
 <template>
   <div id="rule">
+    <Frequency />
+    <Time />
     <Order />
   </div>
 </template>
 
 <script>
+import Frequency from './frequency/Index'
+import Time from './time/Index'
 import Order from './order/Index'
 
 export default {
   name: 'Rule',
   components: {
+    Frequency,
+    Time,
     Order
   },
   setup () {
