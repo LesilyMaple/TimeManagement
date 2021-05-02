@@ -11,6 +11,10 @@ class TimeManager {
   static in (time, startTime, endTime) {
     return (Time.compare(time, startTime) === 1) && (Time.compare(endTime, time) === 1)
   }
+
+  static second2Minute (second) {
+    return Math.floor(second / 60)
+  }
 }
 
 export default TimeManager

@@ -21,7 +21,11 @@
         Finish
       </el-breadcrumb-item>
     </el-breadcrumb>
-    <router-view />
+    <router-view v-slot="{ Component }">
+      <keep-alive exclude="Timing">
+        <component :is="Component" />
+      </keep-alive>
+    </router-view>
   </div>
 </template>
 
@@ -42,9 +46,9 @@ export default {
 #task-main{
   height: 100%;
 }
-#breadcrumb{
-  position: absolute;
-  top: 0;
-  left: 0;
-}
+//#breadcrumb{
+//  position: absolute;
+//  top: 0;
+//  left: 0;
+//}
 </style>

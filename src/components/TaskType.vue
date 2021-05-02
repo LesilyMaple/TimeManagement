@@ -1,12 +1,7 @@
 <template>
   <div id="task-type">
     <div v-if="readonly">
-      <div
-        v-for="item in getTaskTypeNameByIds(data)"
-        :key="item"
-      >
-        {{ item }}
-      </div>
+      {{ getTaskTypeFullName(data) }}
     </div>
     <el-cascader
       v-else
@@ -22,6 +17,7 @@
 <script>
 import { twoWayBinding } from '@/utils'
 import { useStore } from 'vuex'
+import { getTaskTypeFullName } from '@/utils/taskType'
 
 export default {
   name: 'TaskType',
@@ -40,25 +36,6 @@ export default {
     const store = useStore()
     const options = store.state.taskType.options
     const data = twoWayBinding(props, ctx)
-
-    const getTaskTypeNameByIds = (idArr) => {
-      const nameArr = []
-      let idPointer = 0
-
-      function find (arr) {
-        for (const e of arr) {
-          if (e.id === idArr[idPointer]) {
-            nameArr.push(e.name)
-            idPointer++
-            find(e.children)
-            return
-          }
-        }
-      }
-
-      find(store.state.taskType.data.children)
-      return nameArr
-    }
 
     // const getTaskTypeNameById = (id) => {
     //   const name = []
@@ -88,7 +65,7 @@ export default {
     return {
       options,
       data,
-      getTaskTypeNameByIds
+      getTaskTypeFullName
     }
   }
 }

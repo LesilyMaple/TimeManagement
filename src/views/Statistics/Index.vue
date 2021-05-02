@@ -38,19 +38,15 @@ export default {
 
   >:nth-child(1){
     grid-area: 1 @s 1 @s 2 @s 2;
-    color: red;
-  }
-  >:nth-child(3){
-    grid-area: 2 @s 1 @s 3 @s 2;
-    color: blue;
   }
   >:nth-child(2){
+    grid-area: 2 @s 1 @s 3 @s 2;
+  }
+  >:nth-child(3){
     grid-area: 1 @s 2 @s 3 @s 3;
-    color: greenyellow;
   }
   >:nth-child(4){
     grid-area: 3 @s 2 @s 4 @s 3;
-    color: violet;
   }
 }
 </style>

@@ -74,7 +74,7 @@ export default {
     const store = useStore()
 
     const names = reactive([{ name: 'a' }, { name: 'b' }])
-    const types = reactive([{ not: false, type: 'study' }])
+    const types = reactive([{ not: false, type: [1] }])
     const devotions = reactive([{ operator: OPERATOR.EQ, rate: 0 }])
     const satisfactions = reactive([{ operator: OPERATOR.EQ, rate: 0 }])
     const times = reactive([{ notDate: false, notTime: false }])

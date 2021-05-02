@@ -7,16 +7,15 @@
         v-model="name"
         clearable
       />
-      <SubTasks :data-set="subTasks" />
-      <el-time-picker
-        v-model="startTime"
-        placeholder="现在"
-        format="HH:mm"
-      />
-      <TimingMode
-        v-model="timingMode"
-        :tomato-settings="tomatoSettings"
-      />
+      <div>
+        <span>预期时间</span>
+        <input
+          v-model="expectedTime"
+          :disabled="subTasks.length!==0"
+        >
+        <span>分钟</span>
+      </div>
+      <SubTasks :data="subTasks" />
       <el-button
         type="primary"
         @click="start"
@@ -34,11 +33,10 @@
 </template>
 
 <script>
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import Template from './Template'
-import SubTasks from './SubTasks'
-import TimingMode from './TimingMode'
+import SubTasks from '@/components/SubTasks'
 import TaskType from '@/components/TaskType'
 
 export default {
@@ -46,13 +44,10 @@ export default {
   components: {
     TaskType,
     Template,
-    SubTasks,
-    TimingMode
+    SubTasks
   },
   setup () {
     const router = useRouter()
-
-    const taskType = ref([])
 
     /*
     *  Note:
@@ -61,14 +56,19 @@ export default {
     *  reactive类型传到组件中是proxy，具备响应性
     */
     const name = ref('')
-    const type = reactive([])
+    const time = ref(0)
+    const taskType = reactive([])
     const subTasks = reactive([])
-    const startTime = ref(null)
-    const timingMode = ref('normal')
-    const tomatoSettings = reactive({
-      workTime: 3,
-      relaxTime: 2,
-      round: 2
+    const expectedTime = ref(null)
+
+    watch(subTasks, () => {
+      expectedTime.value = 0
+      if (subTasks.length === 0) return
+      for (const subTask of subTasks) {
+        if (subTask.expectedTime !== null) {
+          expectedTime.value += subTask.expectedTime
+        }
+      }
     })
 
     const start = () => {
@@ -76,11 +76,10 @@ export default {
         name: 'Timing',
         params: {
           name: name.value,
-          type: type,
-          subTasks: subTasks,
-          startTime: startTime.value === null ? new Date() : startTime.value,
-          mode: timingMode.value,
-          tomato: JSON.stringify(tomatoSettings)
+          time: time.value,
+          expectedTime: expectedTime.value,
+          taskType: JSON.stringify(taskType),
+          subTasks: JSON.stringify(subTasks)
         }
       })
     }
@@ -88,11 +87,8 @@ export default {
     return {
       taskType,
       name,
-      type,
       subTasks,
-      startTime,
-      timingMode,
-      tomatoSettings,
+      expectedTime,
       start
     }
   }

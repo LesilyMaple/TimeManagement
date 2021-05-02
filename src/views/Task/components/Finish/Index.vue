@@ -1,12 +1,12 @@
 <template>
   <div>
-    {{ type }}<br>
+    {{ taskType }}<br>
     {{ name }}<br>
     {{ startTime }}<br>
     {{ endTime }}<br>
     <el-input
       type="textarea"
-      :rows="5"
+      :rows="10"
       placeholder="请输入内容"
       v-model="note"
     />
@@ -15,11 +15,12 @@
       :key="index"
       v-once
     >
-      {{ item.text }} | {{ item.time }}<br>
+      {{ item.name }} | {{ item.time }}<br>
     </div>
+    <Track :data="track" />
     投入度：<el-rate v-model="devotion" />
     满意度：<el-rate v-model="satisfaction" />
-    <el-button @click="end">
+    <el-button @click="finish">
       完成
     </el-button>
   </div>
@@ -27,39 +28,56 @@
 
 <script>
 import { useRoute, useRouter } from 'vue-router'
-import { useStore } from 'vuex'
-import { onMounted, ref } from 'vue'
-import { getStateRef } from '@/utils'
+import { ref } from 'vue'
+import Track from '@/components/Track'
 
 export default {
   name: 'Finish',
+  components: {
+    Track
+  },
   setup () {
     const route = useRoute()
     const router = useRouter()
-    const state = useStore().state
 
-    const mode = ref('')
+    const name = route.params
+    let time = route.params.time
+    const note = ref(route.params.note)
+    const taskType = JSON.parse(route.params.taskType)
+    let startTime = JSON.parse(route.params.startTime)
+    let endTime = JSON.parse(route.params.endTime)
+    const subTasks = JSON.parse(route.params.subTasks)
+    const track = JSON.parse(route.params.track)
 
-    const end = () => {
+    const devotion = ref(0)
+    const satisfaction = ref(0)
+
+    if (subTasks.length !== 0) {
+      time = subTasks.reduce((sum, cur) => {
+        return sum + cur.time
+      }, 0)
+      startTime = subTasks[0].startTime
+      endTime = subTasks[subTasks.length - 1].endTime
+    }
+
+    const finish = () => {
       router.push({
         name: 'Start'
       })
     }
 
-    onMounted(() => {
-      mode.value = route.params.mode
-    })
-
     return {
-      type: state.type,
-      name: state.name,
-      subTasks: state.subTasks,
-      startTime: state.startTime,
-      endTime: state.endTime,
-      note: getStateRef(state, 'note'),
-      devotion: getStateRef(state, 'devotion'),
-      satisfaction: getStateRef(state, 'satisfaction'),
-      end
+      name,
+      taskType,
+      time,
+      subTasks,
+      startTime,
+      endTime,
+      track,
+      note,
+      devotion,
+      satisfaction,
+      finish
     }
   }
 }

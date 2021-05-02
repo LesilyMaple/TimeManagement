@@ -3,9 +3,12 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import installElementPlus from './plugins/element'
-import MainMgr from '@/store/MainMgr'
 
 const app = createApp(App)
+
+app.directive('disabled', (el, binding) => {
+  el.style.color = '#555555'
+})
 
 installElementPlus(app)
 
@@ -13,7 +16,6 @@ store.dispatch('taskType/init')
 store.dispatch('orderRule/init')
 store.dispatch('timeRule/init')
 store.dispatch('frequencyRule/init')
-
-MainMgr.init()
+store.dispatch('statistics/init')
 
 app.use(store).use(router).mount('#app')

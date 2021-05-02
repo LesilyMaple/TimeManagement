@@ -15,10 +15,16 @@
 
 <script>
 import Nav from '@/components/Nav'
+import { useStore } from 'vuex'
+import { init } from '@/utils/taskType'
 
 export default {
   components: {
     Nav
+  },
+  setup () {
+    const store = useStore()
+    init(store.state.taskType.data)
   }
 }
 

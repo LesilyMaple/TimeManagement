@@ -13,8 +13,10 @@
   },
   "main": "background.js",
   "dependencies": {
+    "@vueform/toggle": "^1.0.1",
     "axios": "^0.21.1",
     "core-js": "^3.11.0",
+    "echarts": "^5.1.0",
     "element-plus": "^1.0.2-beta.40",
     "konva": "^7.2.5",
     "vue": "^3.0.11",
@@ -57,7 +59,8 @@
       "parser": "babel-eslint"
     },
     "rules": {
-      "vue/no-v-model-argument": "off"
+      "vue/no-v-model-argument": "off",
+      "vue/no-multiple-template-root": "off"
     }
   },
   "browserslist": [
