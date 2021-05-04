@@ -3273,10 +3273,10 @@ core-js-compat@^3.6.5, core-js-compat@^3.8.1, core-js-compat@^3.9.0:
     browserslist "^4.16.3"
     semver "7.0.0"
 
-core-js@^3.11.0:
-  version "3.11.0"
-  resolved "https://registry.nlark.com/core-js/download/core-js-3.11.0.tgz#05dac6aa70c0a4ad842261f8957b961d36eb8926"
-  integrity sha1-BdrGqnDApK2EImH4lXuWHTbriSY=
+core-js@^3.11.2:
+  version "3.11.2"
+  resolved "https://registry.nlark.com/core-js/download/core-js-3.11.2.tgz#af087a43373fc6e72942917c4a4c3de43ed574d6"
+  integrity sha1-rwh6Qzc/xucpQpF8Skw95D7VdNY=
 
 core-js@^3.6.5:
   version "3.9.1"
@@ -3921,10 +3921,10 @@ ecc-jsbn@~0.1.1:
     jsbn "~0.1.0"
     safer-buffer "^2.1.0"
 
-echarts@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.npm.taobao.org/echarts/download/echarts-5.1.0.tgz#768cc585aa092560f48f01b2d52de493aeecd2b0"
-  integrity sha1-dozFhaoJJWD0jwGy1S3kk67s0rA=
+echarts@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.nlark.com/echarts/download/echarts-5.1.1.tgz?cache=0&sync_timestamp=1619495447964&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fecharts%2Fdownload%2Fecharts-5.1.1.tgz#b186f162f017c555cfd67b12ede6762bdc3ddfda"
+  integrity sha1-sYbxYvAXxVXP1nsS7eZ2K9w939o=
   dependencies:
     tslib "2.0.3"
     zrender "5.1.0"
@@ -4011,10 +4011,10 @@ electron@11.0.0:
     "@types/node" "^12.0.12"
     extract-zip "^1.0.3"
 
-element-plus@^1.0.2-beta.40:
-  version "1.0.2-beta.40"
-  resolved "https://registry.npm.taobao.org/element-plus/download/element-plus-1.0.2-beta.40.tgz#30fc9b161496ae587fab86235c80b728ea43d909"
-  integrity sha1-MPybFhSWrlh/q4YjXIC3KOpD2Qk=
+element-plus@^1.0.2-beta.41:
+  version "1.0.2-beta.41"
+  resolved "https://registry.nlark.com/element-plus/download/element-plus-1.0.2-beta.41.tgz?cache=0&sync_timestamp=1619435228403&other_urls=https%3A%2F%2Fregistry.nlark.com%2Felement-plus%2Fdownload%2Felement-plus-1.0.2-beta.41.tgz#9c234b536b3401d042505c003e579bd65081f0f0"
+  integrity sha1-nCNLU2s0AdBCUFwAPleb1lCB8PA=
   dependencies:
     "@popperjs/core" "^2.4.4"
     "@types/lodash" "^4.14.161"

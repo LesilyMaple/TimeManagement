@@ -1,7 +1,15 @@
 <template>
   <main id="statistics">
-    <ChartType />
-    <Chart />
+    <el-radio-group v-model="currentChartType">
+      <el-radio-button
+        v-for="item in chartTypes"
+        :key="item.value"
+        :label="item.value"
+      >
+        {{ item.label }}
+      </el-radio-button>
+    </el-radio-group>
+    <Chart :chart-type="currentChartType" />
     <Filter />
     <FilterTemplate />
   </main>
@@ -10,19 +18,33 @@
 <script>
 import Chart from './Chart/Index'
 import Filter from './Filter/Index'
-import ChartType from './ChartType/Index'
 import FilterTemplate from './FilterTemplate/Index'
+import { ref } from 'vue'
 
 export default {
   name: 'Statistics',
   components: {
     Chart,
     Filter,
-    ChartType,
     FilterTemplate
   },
   setup () {
+    const chartTypes = [{
+      value: 'list',
+      label: '列表'
+    }, {
+      value: 'pie',
+      label: '扇形图'
+    }, {
+      value: 'scatter',
+      label: '散点图'
+    }]
+    const currentChartType = ref('scatter')
 
+    return {
+      chartTypes,
+      currentChartType
+    }
   }
 }
 </script>

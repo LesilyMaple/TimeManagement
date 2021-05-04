@@ -1,53 +1,105 @@
 <template>
-  <div id="chart-list">
-    <el-table
-      :data="data"
-      style="width: 100%"
-      :default-sort="{prop: 'date', order: 'descending'}"
+  <el-table
+    :data="data"
+    :default-sort="{prop: 'date', order: 'descending'}"
+    :row-class-name="getRowClassName"
+    ref="tableElement"
+    stripe
+  >
+    <el-table-column
+      type="expand"
     >
-      <el-table-column
-        prop="name"
-        label="名称"
-        sortable
-        width="180"
-      />
-      <el-table-column
-        prop="type"
-        label="类型"
-        sortable
-        width="180"
-        :formatter="format"
-      />
-      <el-table-column
-        prop="time"
-        label="时间"
-        sortable
-      />
-    </el-table>
-  </div>
+      <template #default="props">
+        <el-radio-group
+          v-model="radioGroup[props.$index]"
+          size="mini"
+        >
+          <el-radio-button label="subTasks">
+            子任务
+          </el-radio-button>
+          <el-radio-button label="track">
+            轨迹
+          </el-radio-button>
+        </el-radio-group>
+        <div v-if="radioGroup[props.$index]==='subTasks'">
+          {{ props.row.subTasks }}
+        </div>
+        <div v-if="radioGroup[props.$index]==='track'">
+          {{ props.row.track }}
+        </div>
+      </template>
+    </el-table-column>
+    <el-table-column
+      v-for="item in columnOption"
+      :key="item.prop"
+      :prop="item.prop"
+      :label="item.label"
+      :formatter="item.formatter"
+      :sortable="true"
+    />
+  </el-table>
 </template>
 
 <script>
-import { useStore } from 'vuex'
 import { getTaskTypeFullName } from '@/utils/taskType'
+import { reactive, ref } from 'vue'
 
 export default {
   name: 'ChartList',
-  setup () {
-    const store = useStore()
-    const data = store.state.statistics.data
-    const format = (row, column, cellValue, index) => {
-      return getTaskTypeFullName(cellValue)
+  props: {
+    data: {
+      type: Array,
+      required: true
     }
+  },
+  setup (props) {
+    const tableElement = ref(null)
+
+    const columnOption = [{
+      prop: 'name',
+      label: '名称',
+      width: 180,
+      formatter: null
+    }, {
+      prop: 'type',
+      label: '类型',
+      width: 180,
+      formatter: (row, column, cellValue, index) => {
+        return getTaskTypeFullName(cellValue)
+      }
+    }, {
+      prop: 'time',
+      label: '时间',
+      width: 180,
+      formatter: null
+    }]
+
+    const getRowClassName = ({ row }) => {
+      if (row.subTasks.length === 0) {
+        return 'hide'
+      }
+      return ''
+    }
+
+    const radioGroup = (() => {
+      const arr = new Array(props.data.length)
+      for (let i = 0; i < arr.length; i++) {
+        arr[i] = 'subTasks'
+      }
+      return reactive(arr)
+    })()
     return {
-      data,
-      format
+      tableElement,
+      columnOption,
+      getRowClassName,
+      radioGroup
     }
   }
 }
 </script>
 
 <style scoped>
-#chart-list{
+/deep/ .hide .el-table__expand-column .el-icon {
+  visibility: hidden;
 }
 </style>

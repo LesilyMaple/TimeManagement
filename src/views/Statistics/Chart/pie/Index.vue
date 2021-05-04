@@ -1,5 +1,8 @@
 <template>
-  <div id="chart-pie">
+  <div
+    id="chart-pie"
+    ref="containerElement"
+  >
     <el-breadcrumb separator="/">
       <el-breadcrumb-item>
         <a
@@ -33,7 +36,7 @@
       />
     </el-select>
     <div
-      id="chart"
+      ref="chartElement"
       style="width: 600px;height:400px;"
     />
   </div>
@@ -42,15 +45,17 @@
 <script>
 import { init } from 'echarts'
 import { onMounted, reactive, ref, watch } from 'vue'
-import { useStore } from 'vuex'
 import { getTaskTypeName } from '@/utils/taskType'
 
 export default {
   name: 'ChartPie',
-  setup () {
-    const store = useStore()
-    const data = store.state.statistics.data
-
+  props: {
+    data: {
+      type: Array,
+      required: true
+    }
+  },
+  setup (props) {
     const chartOption = {
       title: {
         text: '任务统计',
@@ -80,9 +85,17 @@ export default {
       ]
     }
 
+    const containerElement = ref(null)
+    const chartElement = ref(null)
     let chart
+
+    const setChartContainerSize = () => {
+      chartElement.value.style.width = `${containerElement.value.offsetWidth}px`
+      chartElement.value.style.height = `${containerElement.value.offsetHeight}px`
+    }
+
     const initChart = () => {
-      chart = init(document.getElementById('chart'))
+      chart = init(chartElement.value)
     }
 
     let selectedData
@@ -119,7 +132,7 @@ export default {
       // 遍历data寻找符合当前面包屑的数据
       // 把具体任务写入currentTasks中和chartData中
       // 把任务类型写入currentTypes中
-      for (const item of data) {
+      for (const item of props.data) {
         if (!isEqualType(item.type)) continue
         const type = item.type[breadcrumb.length]
         // 具体任务
@@ -155,6 +168,7 @@ export default {
     }
 
     const renderChart = () => {
+      setChartContainerSize()
       initChart()
       mountClickEvent()
       mountChartData()
@@ -230,6 +244,8 @@ export default {
     })
 
     return {
+      chartElement,
+      containerElement,
       breadcrumb,
       axisType,
       axisTypeOption,
