@@ -1,112 +1,221 @@
 <template>
-  <main>
+  <div v-if="type===-1">
+    无
+  </div>
+  <!-- 时间限制计划 -->
+  <div
+    v-else-if="type===0"
+    class="plan-details"
+  >
+    <h3>计划详情</h3>
+    <div>{{ planDetails.get().id }}</div>
+    <div>{{ planDetails.get().name }}</div>
     <div>
-      plan details <br>
-      {{ planDetails.get().id }} <br>
+      <span>开始时间</span>
+      <span>{{ showTime(planDetails.get().startTime[0]) }}</span>
+      <span>-</span>
+      <span>{{ showTime(planDetails.get().startTime[1]) }}</span>
+    </div>
+    <div>
+      <span>结束时间</span>
+      <span>{{ showTime(planDetails.get().endTime[0]) }}</span>
+      <span>-</span>
+      <span>{{ showTime(planDetails.get().endTime[1]) }}</span>
+    </div>
+    <div>
+      时间限制
+    </div>
+    <el-button-group>
+      <el-button
+        @click="showAddOrderLimitedPlanPopup=true"
+        size="mini"
+      >
+        添加计划
+      </el-button>
+      <el-button
+        @click="showAddRelationPopup=true"
+        size="mini"
+      >
+        添加限制
+      </el-button>
+      <el-button
+        @click="showRemovePlanPopup=true"
+        size="mini"
+      >
+        删除计划
+      </el-button>
+      <el-button
+        @click="showUpdateTimeLimitedPlanPopup=true"
+        size="mini"
+      >
+        修改计划
+      </el-button>
+    </el-button-group>
+  </div>
+  <!-- 顺序限制计划 -->
+  <div
+    v-else-if="type===1"
+    class="plan-details"
+  >
+    <h3>计划详情</h3>
+    <div>
+      {{ planDetails.get().id }}
+    </div>
+    <div>
       {{ planDetails.get().name }}
     </div>
-    <el-button
-      size="mini"
-      @click="showAddPlanPopup=true"
-    >
-      添加计划
-    </el-button>
-    <el-button size="mini">
-      添加限制
-    </el-button>
-    <el-button size="mini">
-      删除计划
-    </el-button>
-    <el-button size="mini">
-      删除限制
-    </el-button>
-    <el-button size="mini">
-      修改计划
-    </el-button>
-    <el-button size="mini">
-      修改限制
-    </el-button>
-    <el-dialog
-      title="添加"
-      v-model="showAddPlanPopup"
-      width="30%"
-    >
-      <div>
-        <div>
-          在此计划
-        </div>
-        <el-radio
-          v-model="addOrder"
-          :label="0"
-        >
-          之前
-        </el-radio>
-        <el-radio
-          v-model="addOrder"
-          :label="1"
-        >
-          之后
-        </el-radio>
-        <el-input
-          size="mini"
-          v-model="name"
-        />
-      </div>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="showAddPlanPopup = false">取 消</el-button>
-          <el-button
-            type="primary"
-            @click="addOrderLimitedPlan"
-          >确 定</el-button>
-        </span>
-      </template>
-    </el-dialog>
-  </main>
+    <div>
+      顺序限制
+    </div>
+    <el-button-group>
+      <el-button
+        @click="showAddOrderLimitedPlanPopup=true"
+        size="mini"
+      >
+        添加计划
+      </el-button>
+      <el-button
+        @click="showAddRelationPopup=true"
+        size="mini"
+      >
+        添加限制
+      </el-button>
+      <el-button
+        @click="showRemovePlanPopup=true"
+        size="mini"
+      >
+        删除计划
+      </el-button>
+      <el-button
+        @click="showUpdateOrderLimitedPlanPopup=true"
+        size="mini"
+      >
+        修改计划
+      </el-button>
+    </el-button-group>
+  </div>
+  <!-- 关系 -->
+  <div
+    v-else
+    class="plan-details"
+  >
+    <div>{{ planDetails.get().fromId }}</div>
+    <div>{{ planDetails.get().toId }}</div>
+    <el-button-group>
+      <el-button
+        @click="showRemoveRelationPopup=true"
+        size="mini"
+      >
+        删除限制
+      </el-button>
+      <el-button
+        @click="showUpdateRelationPopup=true"
+        size="mini"
+      >
+        修改限制
+      </el-button>
+    </el-button-group>
+  </div>
+  <AddOrderLimitedPlanPopup v-model="showAddOrderLimitedPlanPopup" />
+  <AddTimeLimitedPlanPopup v-model="showAddTimeLimitedPlanPopup" />
+  <AddRelationPopup v-model="showAddRelationPopup" />
+  <RemovePlanPopup v-model="showRemovePlanPopup" />
+  <RemoveRelationPopup v-model="showRemoveRelationPopup" />
+  <UpdateOrderLimitedPlanPopup v-model="showUpdateOrderLimitedPlanPopup" />
+  <UpdateRelationPopup v-model="showUpdateRelationPopup" />
+  <UpdateTimeLimitedPlanPopup v-model="showUpdateTimeLimitedPlanPopup" />
 </template>
 
 <script>
-import planDetails from '@/store/planDetails'
 import { ref } from 'vue'
-import { planHandleProxy as dayPlanProxy } from '@/views/Plan/LimitedPlan/DayView/planProxy'
-import { useStore } from 'vuex'
+import planDetails from '@/store/planDetails'
+import AddOrderLimitedPlanPopup from '../LimitedPlan/DayView/popup/AddOrderLimitedPlanPopup'
+import AddTimeLimitedPlanPopup from '@/views/Plan/LimitedPlan/DayView/popup/AddTimeLimitedPlanPopup'
+import AddRelationPopup from '../LimitedPlan/DayView/popup/AddRelationPopup'
+import RemovePlanPopup from '../LimitedPlan/DayView/popup/RemovePlanPopup'
+import RemoveRelationPopup from '../LimitedPlan/DayView/popup/RemoveRelationPopup'
+import UpdateOrderLimitedPlanPopup from '../LimitedPlan/DayView/popup/UpdateOrderLimitedPlanPopup'
+import UpdateTimeLimitedPlanPopup from '@/views/Plan/LimitedPlan/DayView/popup/UpdateTimeLimitedPlanPopup'
+import UpdateRelationPopup from '@/views/Plan/LimitedPlan/DayView/popup/UpdateRelationPopup'
+import TimeManager from '@/utils/time'
 
 export default {
   name: 'PlanDetails',
+  components: {
+    AddOrderLimitedPlanPopup,
+    AddTimeLimitedPlanPopup,
+    AddRelationPopup,
+    RemovePlanPopup,
+    RemoveRelationPopup,
+    UpdateOrderLimitedPlanPopup,
+    UpdateRelationPopup,
+    UpdateTimeLimitedPlanPopup
+  },
   setup () {
-    const store = useStore()
-    store.dispatch('limitedPlanDay/init')
+    const showAddOrderLimitedPlanPopup = ref(false)
+    const showAddTimeLimitedPlanPopup = ref(false)
+    const showAddRelationPopup = ref(false)
+    const showRemovePlanPopup = ref(false)
+    const showRemoveRelationPopup = ref(false)
+    const showUpdateOrderLimitedPlanPopup = ref(false)
+    const showUpdateRelationPopup = ref(false)
+    const showUpdateTimeLimitedPlanPopup = ref(false)
 
-    const showAddPlanPopup = ref(false)
-    const addOrder = ref(0)
+    const type = ref(-1)
+    const updateType = (id) => {
+      const i = id[0]
+      switch (i) {
+        case 't': // 时间限制计划
+          type.value = 0
+          return
+        case 'o': // 顺序限制计划
+          type.value = 1
+          return
+        case 'r': // 关系
+          type.value = 2
+          return
+        default: // 默认值
+          type.value = -1
+      }
+    }
+    planDetails.onChange = id => {
+      updateType(id)
+    }
 
-    const name = ref('')
-    const addOrderLimitedPlan = () => {
-      showAddPlanPopup.value = false
-      if (name.value !== '') {
-        dayPlanProxy.addOrderLimitedPlan({
-          name: name.value,
-          order: addOrder.value
-        }, planDetails.get().id)
+    const showTime = (time) => {
+      if (time) {
+        return TimeManager.timestamp2time(time)
+      } else {
+        return '无'
       }
     }
 
-    const addRelation = () => {
-
-    }
-
     return {
+      type,
       planDetails,
-      showAddPlanPopup,
-      addOrder,
-      name,
-      addOrderLimitedPlan,
-      addRelation
+      showAddOrderLimitedPlanPopup,
+      showAddTimeLimitedPlanPopup,
+      showAddRelationPopup,
+      showRemovePlanPopup,
+      showRemoveRelationPopup,
+      showUpdateOrderLimitedPlanPopup,
+      showUpdateRelationPopup,
+      showUpdateTimeLimitedPlanPopup,
+      showTime
     }
   }
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+.plan-details{
+  display: flex;
+  flex-direction: column;
 
+  .el-button-group{
+    margin-top: auto;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
 </style>

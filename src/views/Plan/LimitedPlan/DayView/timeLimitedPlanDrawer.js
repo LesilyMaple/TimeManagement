@@ -1,16 +1,18 @@
 import Konva from 'konva'
-import { planSet } from './tempData'
 import limitedPlanDrawer from './limitedPlanDrawer'
 import timeLineConfig from './timeLineConfig'
 import timeLimitedPlanConfig from './timeLimitedPlanConfig'
 
 class timeLimitedPlanDrawer extends limitedPlanDrawer {
-  static init () {
+  static planSet
+
+  static render () {
+    this.planSet = this.store.state.limitedPlanDay.timeLimitedPlanSet
     this.renderPlans()
   }
 
   static renderPlans () {
-    for (const plan of planSet.timeLimitedPlanSet) {
+    for (const plan of this.planSet) {
       this.renderPlan(plan)
     }
   }
@@ -24,12 +26,12 @@ class timeLimitedPlanDrawer extends limitedPlanDrawer {
   }
 
   static renderStartNode (plan) {
-    const node = this.transform(plan, plan.startTime, plan.startType)
+    const node = this.transform(plan, plan.startTime)
     if (node !== null) {
       this.mountNodeEvent(node)
       node.id(plan.id + 'start')
       node.name(plan.id)
-      this.located(node, plan.startTime[0])
+      this.located(node, plan.startTime)
       this.nodeGroup.add(node)
 
       return node
@@ -38,12 +40,12 @@ class timeLimitedPlanDrawer extends limitedPlanDrawer {
   }
 
   static renderEndNode (plan) {
-    const node = this.transform(plan, plan.endTime, plan.endType)
+    const node = this.transform(plan, plan.endTime)
     if (node !== null) {
       this.mountNodeEvent(node)
       node.id(plan.id + 'end')
       node.name(plan.id)
-      this.located(node, plan.endTime[0])
+      this.located(node, plan.endTime)
       this.nodeGroup.add(node)
 
       return node
@@ -51,15 +53,18 @@ class timeLimitedPlanDrawer extends limitedPlanDrawer {
     return null
   }
 
-  static transform (plan, time, type) {
-    switch (time.length) {
-      case 0: return null
-      case 1: return this.transformToPointNode(plan, time, type)
-      case 2: return this.transformToRangeNode(plan, time, type)
+  static transform (plan, time) {
+    if (!time[0] && !time[1]) {
+      return null
+    } else if (time[0] && time[1]) {
+      return this.transformToRangeNode(plan, time)
+    } else {
+      return this.transformToPointNode(plan, time)
     }
   }
 
-  static transformToPointNode (plan, time, type) {
+  static transformToPointNode (plan, time) {
+    const order = time[0] ? 0 : 1
     const node = new Konva.RegularPolygon({
       x: 100,
       y: 100,
@@ -68,16 +73,17 @@ class timeLimitedPlanDrawer extends limitedPlanDrawer {
       fill: 'red',
       draggable: true
     })
-    this.setRotation(node, type)
+    this.setRotation(node, order)
     return node
   }
 
-  static transformToRangeNode (plan, time, type) {
-    const startTime = time[0].split(':')
-    const endTime = time[1].split(':')
+  static transformToRangeNode (plan, time) {
+    console.log(time)
+    const startTime = time[0]
+    const endTime = time[1]
 
-    const hour = parseInt(endTime[0]) - parseInt(startTime[0])
-    const minute = parseInt(endTime[1]) - parseInt(startTime[1])
+    const hour = endTime.getHours() - startTime.getHours()
+    const minute = endTime.getMinutes() - startTime.getMinutes()
 
     const width = (hour + minute / 60) * timeLineConfig.block.width
     const height = timeLimitedPlanConfig.height * 1.732
@@ -91,8 +97,8 @@ class timeLimitedPlanDrawer extends limitedPlanDrawer {
     return node
   }
 
-  static setRotation (node, type) {
-    if (type === 0) {
+  static setRotation (node, order) {
+    if (order === 0) {
       node.rotation(90)
     } else {
       node.rotation(270)
@@ -100,9 +106,9 @@ class timeLimitedPlanDrawer extends limitedPlanDrawer {
   }
 
   static located (node, time) {
-    const tmp = time.split(':')
-    const hour = parseInt(tmp[0])
-    const minute = parseInt(tmp[1])
+    time = time[0] ? time[0] : time[1]
+    const hour = time.getHours()
+    const minute = time.getMinutes()
     const x = (hour + minute / 60) * timeLineConfig.block.width
     let y = timeLineConfig.y
     if (node.getClassName() === 'Rect') {
@@ -138,6 +144,30 @@ class timeLimitedPlanDrawer extends limitedPlanDrawer {
     }
 
     return [x1, y, x2, y]
+  }
+
+  /*
+  * 添加相关
+  */
+
+  static addPlan (rawPlan, id) {
+    this.renderPlan({ id, ...rawPlan })
+  }
+
+  /*
+  * 移除相关
+  */
+
+  static removePlan (id) {
+
+  }
+
+  /*
+  * 更新相关
+  */
+
+  static updatePlan (plan) {
+
   }
 
   static updatePosition (node) {

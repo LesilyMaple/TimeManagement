@@ -1,10 +1,11 @@
 import Konva from 'konva'
 import timeLineConfig from './timeLineConfig'
+import { planHandleProxy } from './planProxy'
 
 const timeLineDrawer = {
   layer: null,
   width: 0, // 不能直接用layer的宽度设置stage的宽度，layer的宽度貌似是根据stage的宽度确定的，所以要手动提供一个layer的宽度
-  init () {
+  render () {
     this.layer = this.createTimeLine()
     this.addTimeBlocks()
     this.width = 24 * timeLineConfig.block.width
@@ -17,7 +18,9 @@ const timeLineDrawer = {
   },
   addTimeBlocks () {
     for (let i = 0; i < 24; i++) {
-      this.layer.add(this.createTimeBlock(i))
+      const timeBlock = this.createTimeBlock(i)
+      this.layer.add(timeBlock)
+      this.mountDBClickEvent(timeBlock)
     }
   },
   createTimeBlock (i) {
@@ -50,6 +53,11 @@ const timeLineDrawer = {
     text.x(timeLineConfig.block.width / 2 - text.width() / 2)
     text.y(timeLineConfig.block.height / 2 - text.height() / 2)
     return text
+  },
+  mountDBClickEvent (shape) {
+    shape.on('dblclick', () => {
+      planHandleProxy.showAddTimeLimitedPlanPopup.value = true
+    })
   }
 }
 

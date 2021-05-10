@@ -1,47 +1,70 @@
 <template>
   <input
     ref="inputElement"
+    :class="[inputClass]"
     @input="handleInput"
   >
 </template>
 
 <script>
-
 import { ref } from 'vue'
-
+import { twoWayBinding } from '@/utils'
 export default {
   name: 'Input',
-  emits: ['input'],
+  props: {
+    modelValue: {
+      type: [String, Number],
+      default: ''
+    },
+    validate: {
+      type: String,
+      default: ''
+    }
+  },
+  emits: ['update:modelValue'],
   setup (props, ctx) {
     const inputElement = ref(null)
+    const inputClass = ref('')
+    const inputText = twoWayBinding(props, ctx)
 
     const handleInput = () => {
       const input = inputElement.value.value
-      validate(input)
-      ctx.emit('input', Number(input))
+      inputText.value = validate(input)
     }
 
-    const validate = (input) => {
+    const validateNumber = (input) => {
       const reg = /^\s*[0-9]*\s*$/
       if (reg.test(input)) {
         setDefault()
+        return Number(input)
       } else {
         setError()
+        return input
       }
     }
 
+    let validate = (input) => input
+    switch (props.validate) {
+      case '':
+        break
+      case 'number':
+        validate = validateNumber
+        break
+      default:
+        break
+    }
+
     const setDefault = () => {
-      inputElement.value.style.borderColor = '#000'
-      inputElement.value.style.color = '#000'
+      inputClass.value = 'default'
     }
 
     const setError = () => {
-      inputElement.value.style.borderColor = 'red'
-      inputElement.value.style.color = 'red'
+      inputClass.value = 'error'
     }
 
     return {
       handleInput,
+      inputClass,
       inputElement
     }
   }
@@ -51,13 +74,35 @@ export default {
 <style lang="less" scoped>
 input {
   outline: none;
-  text-align: center;
-  border-bottom: 1px solid #000;
+  border-bottom: 1px solid black;
   border-top: 0;
   border-left: 0;
   border-right: 0;
   background-color: transparent;
-  width: 2em;
+  caret-color: #646464;
+  box-shadow: 0 1px transparent;
   transition: 200ms;
+
+  &:focus{
+    border-color: rgb(64, 158, 255);
+    box-shadow: 0 1px rgb(64, 158, 255);
+  }
+}
+.error{
+  border-color: red;
+
+  &:focus{
+    border-color: red;
+    box-shadow: 0 1px red;
+  }
+}
+
+.default{
+  border-color: black;
+
+  &:focus{
+    border-color: rgb(64, 158, 255);
+    box-shadow: 0 1px rgb(64, 158, 255);
+  }
 }
 </style>

@@ -11,6 +11,7 @@
 import { onMounted, ref } from 'vue'
 import { init } from 'echarts'
 import dayjs from 'dayjs'
+import TimeManager from '@/utils/time'
 
 export default {
   name: 'Index',
@@ -21,9 +22,7 @@ export default {
     }
   },
   setup (props) {
-    const clearDate = (time) => {
-      return time.year(1970).month(0).date(1)
-    }
+    const clearDate = TimeManager.clearDate
 
     const chartOption = {
       xAxis: {

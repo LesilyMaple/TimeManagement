@@ -1,10 +1,11 @@
-import limitedPlanDrawer from './limitedPlanDrawer'
 import Konva from 'konva'
+import limitedPlanDrawer from './limitedPlanDrawer'
+import orderLimitedPlanConfig from './orderLimitedPlanConfig'
 
 class orderLimitedPlanDrawer extends limitedPlanDrawer {
   static planSet
 
-  static init () {
+  static render () {
     this.planSet = this.store.state.limitedPlanDay.orderLimitedPlanSet
     this.renderPlans()
   }
@@ -18,12 +19,13 @@ class orderLimitedPlanDrawer extends limitedPlanDrawer {
   static renderPlan (plan) {
     const node = this.renderNode(plan)
     this.nodeGroup.add(node)
+    return node
   }
 
   static renderNode (plan) {
     const node = this.transform(plan)
     this.mountNodeEvent(node)
-    this.located(node, plan.pos.x, plan.pos.y)
+    this.located(node, plan.x, plan.y)
     this.setBound(node)
     return node
   }
@@ -31,8 +33,8 @@ class orderLimitedPlanDrawer extends limitedPlanDrawer {
   static transform (plan) {
     return new Konva.Circle({
       id: plan.id,
-      radius: 20,
-      fill: '#CD5C5C',
+      radius: orderLimitedPlanConfig.radius,
+      fill: orderLimitedPlanConfig.fill,
       draggable: true
     })
   }
@@ -56,26 +58,29 @@ class orderLimitedPlanDrawer extends limitedPlanDrawer {
     })
   }
 
-  static async addNode (plan, baseId) {
-    // const id = await this.store.dispatch('limitedPlanDay/add')
-    // const node =
+  static findNodeByPlanId (id) {
+    return this.nodeGroup.findOne('#' + id)
   }
 
-  static deleteNode () {
+  static addPlan (plan) {
+    this.renderPlan(plan)
+  }
+
+  static removePlan (id) {
 
   }
 
-  static updateNode () {
+  static updatePlan (plan) {
 
   }
 
   static updatePosition (node) {
-    const plan = this.findPlanByNode(node)
-    this.store.dispatch('limitedPlanDay/updatePosition', {
-      plan: plan,
-      x: node.x(),
-      y: node.y()
-    })
+    // const plan = this.findPlanByNode(node)
+    // this.store.dispatch('limitedPlanDay/updatePosition', {
+    //   plan: plan,
+    //   x: node.x(),
+    //   y: node.y()
+    // })
   }
 }
 

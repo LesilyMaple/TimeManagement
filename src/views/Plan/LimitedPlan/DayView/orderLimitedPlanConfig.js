@@ -4,7 +4,7 @@ const orderLimitedPlanConfig = {
     this.backgroundHeight = backgroundHeight
   },
   radiusRate: 0.02,
-  fill: 'red',
+  fill: '#B22222',
   stroke: 'white',
   strokeWidth: 2,
 

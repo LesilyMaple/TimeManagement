@@ -13,14 +13,18 @@
         <div id="sub-task">
           <i class="el-icon-sort" />
           <el-input
-            class="text-input"
+            class="input-text"
             v-model="element.name"
             placeholder="子任务名称"
             clearable
           />
           <div>
             <span class="expected-time">预期时间</span>
-            <Input @input="element.expectedTime=$event" />
+            <Input
+              validate="number"
+              v-model="element.expectedTime"
+              class="input-time"
+            />
             <span>分钟</span>
           </div>
           <i
@@ -105,8 +109,13 @@ export default {
     }
   }
 
-  .text-input {
+  .input-text {
     width: 20em;
+  }
+
+  .input-time{
+    width: 2em;
+    text-align: center;
   }
 }
 

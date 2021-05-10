@@ -1,4 +1,5 @@
 import { Time } from '@/interface/time'
+import dayjs from 'dayjs'
 
 class TimeManager {
   static string2time (str) {
@@ -14,6 +15,18 @@ class TimeManager {
 
   static second2Minute (second) {
     return Math.floor(second / 60)
+  }
+
+  static clearDate (dayjsTime) {
+    return dayjsTime.year(1970).month(0).date(1)
+  }
+
+  static timestamp2time (timestamp) {
+    return dayjs(timestamp).format('HH:mm')
+  }
+
+  static timestamp2date (timestamp) {
+    return dayjs(timestamp).format('YYYY/MM/DD')
   }
 }
 
