@@ -24,3 +24,7 @@ export function getOrderOptions () {
     label: '之后'
   }]
 }
+
+export function parsePlanId2Number (id) {
+  return Number(/[0-9]+/.exec(id)[0])
+}

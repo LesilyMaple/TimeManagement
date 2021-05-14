@@ -1,34 +1,33 @@
 <template>
   <div id="start">
-    <div>
-      <TaskType v-model="taskType" />
-      <el-input
-        placeholder="任务名称"
-        v-model="name"
-        clearable
-      />
+    <div id="task-panel">
       <div>
+        <TaskType v-model="taskType" />
+        <el-input
+          placeholder="任务名称"
+          v-model="name"
+          clearable
+        />
+      </div>
+      <div id="expected-time">
         <span>预期时间</span>
-        <input
+        <Input
           v-model="expectedTime"
           :disabled="subTasks.length!==0"
-        >
+          validate="number"
+        />
         <span>分钟</span>
       </div>
       <SubTasks :data="subTasks" />
       <el-button
         type="primary"
         @click="start"
+        id="start-button"
       >
-        开始
+        开 始
       </el-button>
     </div>
-    <div>
-      <Template />
-    </div>
-    <div>
-      Recent Plan
-    </div>
+    <Template />
   </div>
 </template>
 
@@ -38,13 +37,15 @@ import { useRouter } from 'vue-router'
 import Template from './Template'
 import SubTasks from '@/components/SubTasks'
 import TaskType from '@/components/TaskType'
+import Input from '@/components/Input'
 
 export default {
   name: 'Start',
   components: {
     TaskType,
     Template,
-    SubTasks
+    SubTasks,
+    Input
   },
   setup () {
     const router = useRouter()
@@ -57,7 +58,7 @@ export default {
     */
     const name = ref('')
     const time = ref(0)
-    const taskType = reactive([])
+    const taskType = ref([])
     const subTasks = reactive([])
     const expectedTime = ref(null)
 
@@ -78,7 +79,7 @@ export default {
           name: name.value,
           time: time.value,
           expectedTime: expectedTime.value,
-          taskType: JSON.stringify(taskType),
+          taskType: JSON.stringify(taskType.value),
           subTasks: JSON.stringify(subTasks)
         }
       })
@@ -96,30 +97,61 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "/src/assets/css/text.less";
 @s: e('/');
 
 #start {
-  display: grid;
-  grid-template: 70% 30% @s 30% 70%;
+  display: flex;
+  flex-direction: row;
   height: 100%;
 
-  &>:first-child{
-    grid-area: 1 @s 1 @s 3 @s 2;
+  #task-panel{
+    display: flex;
+    flex-direction: column;
+    width: 45%;
+    margin: 1em;
 
-    .el-button{
-      position: absolute;
-      bottom: 10px;
-      left: 15%;
-      transform: translate(-50%);
+    >div:nth-child(1){
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      >:first-child{
+        margin-right: 0.5em;
+        width: 40%;
+
+        /deep/.el-cascader{
+          width: 18em;
+        }
+      }
+    }
+
+    #expected-time{
+      margin: 1em 0;
+      display: flex;
+      flex-direction: row;
+      >:first-child{
+        margin-left: auto;
+      }
+
+      /deep/ input{
+        width: 3em;
+        margin-left: 0.3em;
+        margin-right: 0.4em;
+        text-align: center;
+      }
+    }
+
+    #start-button{
+      width: 6em;
+      margin-bottom: 1em;
+      margin-top: auto;
+      align-self: center;
     }
   }
 
-  &>:nth-child(2){
-    grid-area: 1 @s 2 @s 2 @s 3;
-  }
-
-  &>:last-child{
-    grid-area: 2 @s 2 @s 3 @s 3;
+  >:nth-child(2){
+    width: 60%;
   }
 }
 </style>

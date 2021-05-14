@@ -1,28 +1,21 @@
 <template>
   <div id="task-template">
-    <h1>template</h1>
+    <h1>模板</h1>
     <el-divider />
     <h2>常用</h2>
-    <div id="common">
+    <div
+      id="common"
+      class="card-container"
+    >
       <div
         v-for="item in common"
         :key="item.id"
+        class="card"
+        @click="showDetail(item)"
       >
-        <div
-          class="item"
-          @click="showDetail(item)"
-        >
-          <div>
-            {{ item.icon }}
-          </div>
-          <div>
-            {{ item.name }}
-          </div>
-          <i
-            class="el-icon-close"
-            @click="removeCommon(item.id)"
-          />
-        </div>
+        <div>{{ getTaskTypeFullName(item.taskType) }}</div>
+        <i class="el-icon-food" />
+        <div>{{ item.name }}</div>
       </div>
       <el-button @click="addCommon">
         add
@@ -30,26 +23,26 @@
     </div>
     <el-divider />
     <h2>自定义</h2>
-    <div id="custom">
+    <div
+      id="custom"
+      class="card-container"
+    >
       <div
         v-for="item in custom"
         :key="item.id"
+        class="card"
+        @click="showDetail(item)"
       >
-        <div
-          class="item"
-          @click="showDetail(item)"
-        >
-          <div>
-            {{ item.icon }}
-          </div>
-          <div>
-            {{ item.name }}
-          </div>
-          <i
-            class="el-icon-close"
-            @click="removeCustom(item.id)"
-          />
+        <div>
+          {{ item.icon }}
         </div>
+        <div>
+          {{ item.name }}
+        </div>
+        <i
+          class="el-icon-close"
+          @click="removeCustom(item.id)"
+        />
       </div>
       <el-button @click="addCustom">
         add
@@ -96,6 +89,7 @@
 import { useStore } from 'vuex'
 import { reactive, ref } from 'vue'
 import SubTasks from '@/components/SubTasks'
+import { getTaskTypeFullName } from '@/utils/taskType'
 
 export default {
   name: 'TaskTemplate',
@@ -152,7 +146,8 @@ export default {
       detailVisible,
       detail,
       showDetail,
-      modify
+      modify,
+      getTaskTypeFullName
     }
   }
 }
@@ -162,35 +157,6 @@ export default {
 #task-template {
 
   #common, #custom {
-    display: flex;
-    flex-direction: row;
-    overflow: auto;
-
-    .item{
-      padding: 0 50px;
-      position: relative;
-
-      &:hover{
-        color: blue;
-        cursor: pointer;
-      }
-
-      &:hover i{
-        display: block;
-      }
-
-      i{
-        display: none;
-        position: absolute;
-        top: 0;
-        right: 0;
-        //transform: translateX(50%) translateY(-50%);
-
-        &:hover{
-          color: red;
-        }
-      }
-    }
   }
 
   #detail-panel{
@@ -206,6 +172,37 @@ export default {
       .el-input{
         width: 85%;
       }
+    }
+  }
+
+  .card-container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    transition: 200ms;
+  }
+
+  .card{
+    display: flex;
+    flex-direction: column;
+    width: 7em;
+    border-radius: 1em;
+    border: solid 2px #646464;
+    padding: 0.5em;
+    margin: 0.5em;
+    cursor: pointer;
+
+    >:nth-child(1){
+      font-size: 0.8em;
+    }
+    >:nth-child(2){
+      align-self: center;
+    }
+    >:nth-child(3){
+      align-self: center;
+    }
+    i{
+      font-size: 3em;
     }
   }
 }

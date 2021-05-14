@@ -18,3 +18,8 @@ export function removeElement (arr, e, key = null) {
   const i = findElement(arr, e, key)
   arr.splice(i, 1)
 }
+
+export function updateElement (arr, e, newVal, key = null) {
+  const i = findElement(arr, e, key)
+  arr[i] = newVal
+}

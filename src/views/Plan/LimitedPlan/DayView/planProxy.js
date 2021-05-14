@@ -51,13 +51,15 @@ const planDrawerProxy = {
     this.stage.draw()
   },
   reDraw (oldDate, newDate) {
-    this.cache.set(oldDate, this.planLayer)
+    this.cache.set(oldDate, this.planLayer.children)
+    limitedPlanDrawer.clearShape()
+    this.stage.batchDraw()
     if (this.cache.has(newDate)) {
-      this.planLayer = this.cache.get(newDate)
+      this.planLayer.children = this.cache.get(newDate)
+      this.stage.batchDraw()
     } else {
-      this.initPlanDrawer()
+      this.draw()
     }
-    this.draw()
   }
 }
 
@@ -78,7 +80,7 @@ const planHandleProxy = {
       x: pos.x,
       y: pos.y
     }
-    this.store.dispatch('limitedPlanDay/addOrderPlan', plan)
+    this.store.dispatch('dateTimePlan/addOrderPlan', plan)
       .then(id => {
         orderLimitedPlanDrawer.addPlan({ id, ...plan })
         const currentNode = limitedPlanDrawer.getSelectedShape()
@@ -86,57 +88,70 @@ const planHandleProxy = {
         let to
         if (order === 0) {
           from = id
-          to = limitedPlanDrawer.getPlanIdByNode(currentNode)
+          to = limitedPlanDrawer.getPlanIdByNodeId(currentNode.id())
         } else {
-          from = limitedPlanDrawer.getPlanIdByNode(currentNode)
+          from = limitedPlanDrawer.getPlanIdByNodeId(currentNode.id())
           to = id
         }
-        console.log(from, to)
-        this.store.dispatch('limitedPlanDay/addRelation', { [from]: to })
+        this.store.dispatch('dateTimePlan/addRelation', { [from]: to })
           .then(_ => {
             limitedPlanDrawer.renderArrowByPlanId(from, to)
           })
       })
   },
   addTimeLimitedPlan (plan) {
-    this.store.dispatch('limitedPlanDay/addTimePlan', plan)
+    this.store.dispatch('dateTimePlan/addTimePlan', plan)
       .then(id => {
-        timeLimitedPlanDrawer.addPlan({ id, ...plan })
+        timeLimitedPlanDrawer.addPlan(plan, id)
+        limitedPlanDrawer.stage.batchDraw()
       })
   },
   addRelation (from, to) {
-    console.log(from, to)
     const relation = {}
     relation[from] = to
-    this.store.dispatch('limitedPlanDay/addRelation', relation)
+    this.store.dispatch('dateTimePlan/addRelation', relation)
       .then(_ => {
         limitedPlanDrawer.renderArrowByPlanId(from, to)
       })
   },
   removePlan (id) {
-    this.store.dispatch('limitedPlanDay/removePlan', id)
+    this.store.dispatch('dateTimePlan/removePlan', id)
       .then(removedData => {
-        orderLimitedPlanDrawer.removePlan(id)
+        removedData.relations.forEach(id => {
+          limitedPlanDrawer.removeRelation(id)
+        })
+        if (id[0] === 't') {
+          timeLimitedPlanDrawer.removePlan(id)
+        } else {
+          orderLimitedPlanDrawer.removePlan(id)
+        }
+        removedData.plans.forEach(id => {
+          orderLimitedPlanDrawer.removeNode(id)
+        })
       })
   },
   removeRelation (relation) {
     limitedPlanDrawer.removeRelation(relation)
-    this.store.dispatch('limitedPlanDay/removeRelation', relation)
+    this.store.dispatch('dateTimePlan/removeRelation', relation)
   },
   updateOrderLimitedPlan (plan) {
-    orderLimitedPlanDrawer.updatePlan(plan)
-    this.store.dispatch('limitedPlanDay/updateOrderPlan', plan)
+    this.store.dispatch('dateTimePlan/updateOrderPlan', plan)
+      .then(_ => {
+        orderLimitedPlanDrawer.updatePlan(plan)
+      })
   },
   updateTimeLimitedPlan (plan) {
-    timeLimitedPlanDrawer.updatePlan(plan)
-    this.store.dispatch('limitedPlanDay/updateTimePlan', plan)
+    this.store.dispatch('dateTimePlan/updateTimePlan', plan)
+      .then(_ => {
+        timeLimitedPlanDrawer.updatePlan(plan)
+      })
   },
   updateRelation (relation) {
     limitedPlanDrawer.updateRelation(relation)
-    this.store.dispatch('limitedPlanDay/updateRelation', relation)
+    this.store.dispatch('dateTimePlan/updateRelation', relation)
   },
-  updatePosition () {
-
+  updatePosition (id, x, y) {
+    this.store.dispatch('dateTimePlan/updatePosition', { id, x, y })
   }
 }
 

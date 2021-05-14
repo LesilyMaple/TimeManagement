@@ -1,12 +1,13 @@
 import Konva from 'konva'
 import limitedPlanDrawer from './limitedPlanDrawer'
 import orderLimitedPlanConfig from './orderLimitedPlanConfig'
+import { planHandleProxy } from '@/views/Plan/LimitedPlan/DayView/planProxy'
 
 class orderLimitedPlanDrawer extends limitedPlanDrawer {
   static planSet
 
   static render () {
-    this.planSet = this.store.state.limitedPlanDay.orderLimitedPlanSet
+    this.planSet = this.store.state.dateTimePlan.orderLimitedPlanSet
     this.renderPlans()
   }
 
@@ -64,23 +65,17 @@ class orderLimitedPlanDrawer extends limitedPlanDrawer {
 
   static addPlan (plan) {
     this.renderPlan(plan)
+    this.stage.batchDraw()
   }
 
   static removePlan (id) {
-
-  }
-
-  static updatePlan (plan) {
-
+    this.layer.findOne('#' + id).destroy()
+    this.stage.batchDraw()
   }
 
   static updatePosition (node) {
-    // const plan = this.findPlanByNode(node)
-    // this.store.dispatch('limitedPlanDay/updatePosition', {
-    //   plan: plan,
-    //   x: node.x(),
-    //   y: node.y()
-    // })
+    const planId = this.getPlanIdByNodeId(node.id())
+    planHandleProxy.updatePosition(planId, node.x(), node.y())
   }
 }
 

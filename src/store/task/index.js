@@ -8,9 +8,316 @@ import {
 const state = () => ({
   common: [{
     id: 1,
-    name: 'a',
+    name: '吃饭',
     time: 40,
     icon: 'icon',
+    taskType: [1],
+    subTasks: [{
+      id: 1,
+      text: 'sub 1',
+      time: 10
+    }, {
+      id: 2,
+      text: 'sub 2',
+      time: 30
+    }]
+  }, {
+    id: 2,
+    name: '吃饭',
+    time: 40,
+    icon: 'icon',
+    taskType: [1],
+    subTasks: [{
+      id: 1,
+      text: 'sub 1',
+      time: 10
+    }, {
+      id: 2,
+      text: 'sub 2',
+      time: 30
+    }]
+  },
+  {
+    id: 1,
+    name: '吃饭',
+    time: 40,
+    icon: 'icon',
+    taskType: [1],
+    subTasks: [{
+      id: 1,
+      text: 'sub 1',
+      time: 10
+    }, {
+      id: 2,
+      text: 'sub 2',
+      time: 30
+    }]
+  },
+  {
+    id: 1,
+    name: '吃饭',
+    time: 40,
+    icon: 'icon',
+    taskType: [1],
+    subTasks: [{
+      id: 1,
+      text: 'sub 1',
+      time: 10
+    }, {
+      id: 2,
+      text: 'sub 2',
+      time: 30
+    }]
+  }, {
+    id: 1,
+    name: '吃饭',
+    time: 40,
+    icon: 'icon',
+    taskType: [1],
+    subTasks: [{
+      id: 1,
+      text: 'sub 1',
+      time: 10
+    }, {
+      id: 2,
+      text: 'sub 2',
+      time: 30
+    }]
+  }, {
+    id: 1,
+    name: '吃饭',
+    time: 40,
+    icon: 'icon',
+    taskType: [1],
+    subTasks: [{
+      id: 1,
+      text: 'sub 1',
+      time: 10
+    }, {
+      id: 2,
+      text: 'sub 2',
+      time: 30
+    }]
+  }, {
+    id: 1,
+    name: '吃饭',
+    time: 40,
+    icon: 'icon',
+    taskType: [1],
+    subTasks: [{
+      id: 1,
+      text: 'sub 1',
+      time: 10
+    }, {
+      id: 2,
+      text: 'sub 2',
+      time: 30
+    }]
+  }, {
+    id: 1,
+    name: '吃饭',
+    time: 40,
+    icon: 'icon',
+    taskType: [1],
+    subTasks: [{
+      id: 1,
+      text: 'sub 1',
+      time: 10
+    }, {
+      id: 2,
+      text: 'sub 2',
+      time: 30
+    }]
+  }, {
+    id: 2,
+    name: '吃饭',
+    time: 40,
+    icon: 'icon',
+    taskType: [1],
+    subTasks: [{
+      id: 1,
+      text: 'sub 1',
+      time: 10
+    }, {
+      id: 2,
+      text: 'sub 2',
+      time: 30
+    }]
+  },
+  {
+    id: 1,
+    name: '吃饭',
+    time: 40,
+    icon: 'icon',
+    taskType: [1],
+    subTasks: [{
+      id: 1,
+      text: 'sub 1',
+      time: 10
+    }, {
+      id: 2,
+      text: 'sub 2',
+      time: 30
+    }]
+  },
+  {
+    id: 1,
+    name: '吃饭',
+    time: 40,
+    icon: 'icon',
+    taskType: [1],
+    subTasks: [{
+      id: 1,
+      text: 'sub 1',
+      time: 10
+    }, {
+      id: 2,
+      text: 'sub 2',
+      time: 30
+    }]
+  }, {
+    id: 1,
+    name: '吃饭',
+    time: 40,
+    icon: 'icon',
+    taskType: [1],
+    subTasks: [{
+      id: 1,
+      text: 'sub 1',
+      time: 10
+    }, {
+      id: 2,
+      text: 'sub 2',
+      time: 30
+    }]
+  }, {
+    id: 1,
+    name: '吃饭',
+    time: 40,
+    icon: 'icon',
+    taskType: [1],
+    subTasks: [{
+      id: 1,
+      text: 'sub 1',
+      time: 10
+    }, {
+      id: 2,
+      text: 'sub 2',
+      time: 30
+    }]
+  }, {
+    id: 1,
+    name: '吃饭',
+    time: 40,
+    icon: 'icon',
+    taskType: [1],
+    subTasks: [{
+      id: 1,
+      text: 'sub 1',
+      time: 10
+    }, {
+      id: 2,
+      text: 'sub 2',
+      time: 30
+    }]
+  }, {
+    id: 1,
+    name: '吃饭',
+    time: 40,
+    icon: 'icon',
+    taskType: [1],
+    subTasks: [{
+      id: 1,
+      text: 'sub 1',
+      time: 10
+    }, {
+      id: 2,
+      text: 'sub 2',
+      time: 30
+    }]
+  }, {
+    id: 2,
+    name: '吃饭',
+    time: 40,
+    icon: 'icon',
+    taskType: [1],
+    subTasks: [{
+      id: 1,
+      text: 'sub 1',
+      time: 10
+    }, {
+      id: 2,
+      text: 'sub 2',
+      time: 30
+    }]
+  },
+  {
+    id: 1,
+    name: '吃饭',
+    time: 40,
+    icon: 'icon',
+    taskType: [1],
+    subTasks: [{
+      id: 1,
+      text: 'sub 1',
+      time: 10
+    }, {
+      id: 2,
+      text: 'sub 2',
+      time: 30
+    }]
+  },
+  {
+    id: 1,
+    name: '吃饭',
+    time: 40,
+    icon: 'icon',
+    taskType: [1],
+    subTasks: [{
+      id: 1,
+      text: 'sub 1',
+      time: 10
+    }, {
+      id: 2,
+      text: 'sub 2',
+      time: 30
+    }]
+  }, {
+    id: 1,
+    name: '吃饭',
+    time: 40,
+    icon: 'icon',
+    taskType: [1],
+    subTasks: [{
+      id: 1,
+      text: 'sub 1',
+      time: 10
+    }, {
+      id: 2,
+      text: 'sub 2',
+      time: 30
+    }]
+  }, {
+    id: 1,
+    name: '吃饭',
+    time: 40,
+    icon: 'icon',
+    taskType: [1],
+    subTasks: [{
+      id: 1,
+      text: 'sub 1',
+      time: 10
+    }, {
+      id: 2,
+      text: 'sub 2',
+      time: 30
+    }]
+  }, {
+    id: 1,
+    name: '吃饭',
+    time: 40,
+    icon: 'icon',
+    taskType: [1],
     subTasks: [{
       id: 1,
       text: 'sub 1',

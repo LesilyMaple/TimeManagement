@@ -72,9 +72,9 @@
 </template>
 
 <script>
-import { reactive, ref } from 'vue'
+import { ref, watch } from 'vue'
 import { twoWayBinding } from '@/utils'
-import { planHandleProxy } from '../planProxy'
+import { planHandleProxy } from '../DayView/planProxy'
 import TaskType from '@/components/TaskType'
 import Input from '@/components/Input'
 import SubTasks from '@/components/SubTasks'
@@ -90,6 +90,10 @@ export default {
     modelValue: {
       type: Boolean,
       default: false
+    },
+    date: {
+      type: Object,
+      default: () => new Date()
     }
   },
   emits: ['update:modelValue'],
@@ -102,8 +106,13 @@ export default {
     const endTimeOrder = ref(0)
     const time = ref(0)
     const name = ref('')
-    const taskType = reactive([])
-    const subTasks = reactive([])
+    const taskType = ref([])
+    const subTasks = ref([])
+
+    watch(() => props.date, () => {
+      startTime.value = [props.date, props.date]
+      endTime.value = [props.date, props.date]
+    })
 
     const onStartTimeChange = () => {
       setTimeOrder(startTime, startTimeOrder)
@@ -145,10 +154,11 @@ export default {
     const add = () => {
       planHandleProxy.addTimeLimitedPlan({
         name: name.value,
-        taskType,
+        taskType: taskType.value,
         startTime: startTime.value,
         endTime: endTime.value,
-        time: time.value
+        time: time.value,
+        subTasks: subTasks.value
       })
       show.value = false
     }

@@ -397,9 +397,7 @@ const actions = {
     axios.post(addUrl, filterWithoutId)
       .then(res => {
         if (res.status === 200) {
-          commit('addFilter', {
-            id: res.data, ...filterWithoutId
-          })
+          commit('addFilter', { id: res.data, ...filterWithoutId })
         }
       })
   },

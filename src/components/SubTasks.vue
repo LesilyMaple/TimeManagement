@@ -1,11 +1,12 @@
 <template>
   <div id="sub-tasks">
+    <h3>子任务</h3>
     <draggable
       :list="data"
       tag="transition-group"
       @start="drag=true"
       @end="drag=false"
-      item-key="id"
+      item-key="_id"
       animation="300"
       handle=".el-icon-sort"
     >
@@ -18,11 +19,11 @@
             placeholder="子任务名称"
             clearable
           />
-          <div>
-            <span class="expected-time">预期时间</span>
+          <div class="expected-time">
+            <span>预期时间</span>
             <Input
-              validate="number"
               v-model="element.expectedTime"
+              validate="number"
               class="input-time"
             />
             <span>分钟</span>
@@ -35,6 +36,7 @@
       </template>
     </draggable>
     <div id="button-group">
+      <i class="el-icon-sort" />
       <el-button
         type="primary"
         @click="add"
@@ -65,7 +67,7 @@ export default {
 
     let id = 0
     const createItem = () => ({
-      id: id++,
+      _id: id++,
       name: '',
       time: 0,
       expectedTime: null
@@ -77,7 +79,7 @@ export default {
 
     const remove = (subTask) => {
       let i = 0
-      while (subTasks[i].id !== subTask.id) i++
+      while (subTasks[i]._id !== subTask._id) i++
       subTasks.splice(i, 1)
     }
 
@@ -90,15 +92,17 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "/src/assets/css/text.less";
+
+h3{
+  letter-spacing: 0.1em;
+}
 
 #sub-task {
   display: flex;
   flex-direction: row;
   align-items: center;
-
-  > :nth-last-child(2) {
-    margin-right: auto;
-  }
+  margin: 1em 0;
 
   .el-icon-sort, .el-icon-close {
     color: dimgrey;
@@ -113,15 +117,25 @@ export default {
     width: 20em;
   }
 
-  .input-time{
-    width: 2em;
-    text-align: center;
+  .expected-time{
+    margin: 0 1em;
+
+    .input-time{
+      width: 3em;
+      margin-left: 0.3em;
+      margin-right: 0.4em;
+      text-align: center;
+    }
   }
 }
 
 #button-group{
   display: flex;
   align-items: center;
+
+  i{
+    color: transparent;
+  }
 
   .el-button{
     width: 20em;

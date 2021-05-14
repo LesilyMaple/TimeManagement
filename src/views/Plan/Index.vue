@@ -1,9 +1,9 @@
 <template>
-  <main id="plan-limited-plan">
+  <div id="plan-limited-plan">
     <LimitedPlan />
     <PlanDetails />
     <UnlimitedPlan />
-  </main>
+  </div>
 </template>
 
 <script>
@@ -17,6 +17,8 @@ export default {
     LimitedPlan,
     PlanDetails,
     UnlimitedPlan
+  },
+  setup () {
   }
 }
 </script>

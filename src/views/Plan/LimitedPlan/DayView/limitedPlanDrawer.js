@@ -22,8 +22,14 @@ class limitedPlanDrawer {
     this.layer.add(this.arrowGroup, this.nodeGroup, this.selectedGroup)
   }
 
+  static clearShape () {
+    this.nodeGroup.destroyChildren()
+    this.arrowGroup.destroyChildren()
+    this.selectedGroup.destroyChildren()
+  }
+
   static render () {
-    this.relation = this.store.state.limitedPlanDay.planRelation
+    this.relation = this.store.state.dateTimePlan.planRelation
     this.renderArrows()
   }
 
@@ -93,17 +99,15 @@ class limitedPlanDrawer {
     let to = this.layer.findOne('#' + j)
     if (i[0] === 't') {
       const nodes = this.layer.find('.' + i)
-      if (nodes.length > 1) {
+      from = nodes[0]
+      if (nodes.length > 1 && !this.isStartNodeName(from.id())) {
         from = nodes[1]
-      } else {
-        from = nodes[0]
       }
     }
     if (j[0] === 't') {
       const nodes = this.layer.find('.' + j)
-      if (nodes.length > 1) {
-        to = nodes[0]
-      } else {
+      to = nodes[0]
+      if (nodes.length > 1 && this.isStartNodeName(to.id())) {
         to = nodes[1]
       }
     }
@@ -112,7 +116,7 @@ class limitedPlanDrawer {
 
   static renderArrowByNode (from, to) {
     const arrow = new Konva.Arrow({
-      id: 'r' + from.id() + '-' + to.id(),
+      id: 'r' + from.id().replace(/end/, '') + '-' + to.id().replace(/start/, ''),
       points: this.getArrowPoints(from, to),
       stroke: '#DA70D6',
       fill: '#DA70D6'
@@ -161,10 +165,10 @@ class limitedPlanDrawer {
     let planSet
     let id
     if (node.name() === '') {
-      planSet = this.store.state.limitedPlanDay.orderLimitedPlanSet
+      planSet = this.store.state.dateTimePlan.orderLimitedPlanSet
       id = node.id()
     } else {
-      planSet = this.store.state.limitedPlanDay.timeLimitedPlanSet
+      planSet = this.store.state.dateTimePlan.timeLimitedPlanSet
       id = node.name()
     }
 
@@ -174,12 +178,16 @@ class limitedPlanDrawer {
     return null
   }
 
-  static getPlanIdByNode (node) {
-    if (node.id()[0] === 't') {
-      return node.name()
-    } else {
-      return node.id()
-    }
+  static getPlanIdByNodeId (id) {
+    return /^.*[0-9]+/.exec(id)[0]
+  }
+
+  static isStartNodeName (name) {
+    return /end$/.test(name)
+  }
+
+  static hasRelation (from, to) {
+    return !!this.layer.findOne('#r' + from + '-' + to)
   }
 
   static updateRelation (relation) {
@@ -225,7 +233,10 @@ class limitedPlanDrawer {
   * 移除结点相关
   */
 
-  static removeRelation (relation) {}
+  static removeRelation (id) {
+    this.layer.findOne('#' + id).destroy()
+    this.stage.batchDraw()
+  }
 }
 
 export default limitedPlanDrawer

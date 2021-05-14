@@ -96,7 +96,7 @@ export default {
 
     const addFilterTemplate = () => {
       console.log(name.value)
-      store.commit('statistics/addFilterTemplate', {
+      store.dispatch('statistics/addFilter', {
         name: name.value,
         names: names,
         types: types,

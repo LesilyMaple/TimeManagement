@@ -17,5 +17,6 @@ store.dispatch('orderRule/init')
 store.dispatch('timeRule/init')
 store.dispatch('frequencyRule/init')
 store.dispatch('statistics/init')
+store.dispatch('unlimitedPlan/init')
 
 app.use(store).use(router).mount('#app')

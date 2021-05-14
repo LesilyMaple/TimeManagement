@@ -1,22 +1,23 @@
-import { reactive } from 'vue'
+import { ref } from 'vue'
 
 const planDetails = {
-  data: reactive({
+  data: ref({
     id: 'e',
     name: 'default',
     x: 0,
     y: 0
   }),
   get: function () {
-    return this.data
+    return this.data.value
   },
   set: function (val) {
     console.log(val)
-    for (const key in this.data) {
-      delete this.data[key]
-    }
-    Object.assign(this.data, val)
-    this.onChange(this.data.id)
+    this.data.value = val
+    this.onChange(this.data.value.id)
+  },
+  clear: function () {
+    this.data.value = {}
+    this.onChange('')
   },
   onChange: function (id) {}
 }

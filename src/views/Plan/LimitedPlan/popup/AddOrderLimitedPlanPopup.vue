@@ -40,7 +40,7 @@
         <el-button @click="show = false">取 消</el-button>
         <el-button
           type="primary"
-          @click="add"
+          @click="submit"
         >确 定</el-button>
       </span>
     </template>
@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import { twoWayBinding } from '@/utils'
 import { planHandleProxy } from '@/views/Plan/LimitedPlan/DayView/planProxy'
 import Input from '@/components/Input'
@@ -72,18 +72,19 @@ export default {
     const show = twoWayBinding(props, ctx)
     const order = ref(0)
     const name = ref('')
-    const taskType = reactive([])
-    const subTasks = reactive([])
+    const taskType = ref([])
+    const subTasks = ref([])
 
-    const add = () => {
+    const submit = () => {
       if (name.value !== '') {
-        console.log(name.value)
-        planHandleProxy.addOrderLimitedPlan({
+        const plan = {
           name: name.value,
           order: order.value,
-          taskType,
-          subTasks
-        })
+          taskType: taskType.value,
+          subTasks: subTasks.value
+        }
+        planHandleProxy.addOrderLimitedPlan(plan)
+
         show.value = false
       } else {
         alert('请输入计划名称')
@@ -96,7 +97,7 @@ export default {
       name,
       taskType,
       subTasks,
-      add
+      submit
     }
   }
 }

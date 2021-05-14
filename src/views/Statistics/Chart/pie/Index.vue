@@ -45,7 +45,7 @@
 <script>
 import { init } from 'echarts'
 import { onMounted, reactive, ref, watch } from 'vue'
-import { getTaskTypeName } from '@/utils/taskType'
+import { getTaskTypeRootName } from '@/utils/taskType'
 
 export default {
   name: 'ChartPie',
@@ -157,7 +157,7 @@ export default {
       for (const type of currentTypes) {
         chartData.push({
           type: type[0],
-          name: getTaskTypeName(type[0]),
+          name: getTaskTypeRootName(type[0]),
           value: getTypeValueByAxisType(type[1])
         })
       }
@@ -221,7 +221,7 @@ export default {
     const enterNext = (type) => {
       breadcrumb.push({
         type,
-        name: getTaskTypeName(type)
+        name: getTaskTypeRootName(type)
       })
       updateChartData()
       draw()

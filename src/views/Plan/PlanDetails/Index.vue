@@ -23,6 +23,11 @@
       <span>{{ showTime(planDetails.get().endTime[1]) }}</span>
     </div>
     <div>
+      <span>类型</span>
+      <span>{{ planDetails.get().taskType }}</span>
+    </div>
+    <ReadonlySubTasks :data="planDetails.get().subTasks" />
+    <div>
       时间限制
     </div>
     <el-button-group>
@@ -65,6 +70,11 @@
       {{ planDetails.get().name }}
     </div>
     <div>
+      <span>类型</span>
+      <span>{{ planDetails.get().taskType }}</span>
+    </div>
+    <ReadonlySubTasks :data="planDetails.get().subTasks" />
+    <div>
       顺序限制
     </div>
     <el-button-group>
@@ -94,9 +104,17 @@
       </el-button>
     </el-button-group>
   </div>
+  <!-- 无限制计划 -->
+  <div v-else-if="type===2">
+    <div>{{ planDetails.get().id }}</div>
+    <div>
+      <span>类型</span>
+      <span>{{ planDetails.get().taskType }}</span>
+    </div>
+  </div>
   <!-- 关系 -->
   <div
-    v-else
+    v-else-if="type===3"
     class="plan-details"
   >
     <div>{{ planDetails.get().fromId }}</div>
@@ -116,6 +134,28 @@
       </el-button>
     </el-button-group>
   </div>
+  <div
+    v-else-if="type===4"
+    class="plan-details"
+  >
+    <div>{{ planDetails.get().id }}</div>
+    <div>
+      <span>开始时间</span>
+      <span>{{ planDetails.get().startDate.toLocaleString() }}</span>
+    </div>
+    <div>
+      <span>结束时间</span>
+      <span>{{ planDetails.get().endDate.getHours() }}</span>
+    </div>
+    <el-button-group>
+      <el-button
+        @click="showRemovePlanPopup=true"
+        size="mini"
+      >
+        删除计划
+      </el-button>
+    </el-button-group>
+  </div>
   <AddOrderLimitedPlanPopup v-model="showAddOrderLimitedPlanPopup" />
   <AddTimeLimitedPlanPopup v-model="showAddTimeLimitedPlanPopup" />
   <AddRelationPopup v-model="showAddRelationPopup" />
@@ -129,14 +169,15 @@
 <script>
 import { ref } from 'vue'
 import planDetails from '@/store/planDetails'
-import AddOrderLimitedPlanPopup from '../LimitedPlan/DayView/popup/AddOrderLimitedPlanPopup'
-import AddTimeLimitedPlanPopup from '@/views/Plan/LimitedPlan/DayView/popup/AddTimeLimitedPlanPopup'
-import AddRelationPopup from '../LimitedPlan/DayView/popup/AddRelationPopup'
-import RemovePlanPopup from '../LimitedPlan/DayView/popup/RemovePlanPopup'
-import RemoveRelationPopup from '../LimitedPlan/DayView/popup/RemoveRelationPopup'
-import UpdateOrderLimitedPlanPopup from '../LimitedPlan/DayView/popup/UpdateOrderLimitedPlanPopup'
-import UpdateTimeLimitedPlanPopup from '@/views/Plan/LimitedPlan/DayView/popup/UpdateTimeLimitedPlanPopup'
-import UpdateRelationPopup from '@/views/Plan/LimitedPlan/DayView/popup/UpdateRelationPopup'
+import AddOrderLimitedPlanPopup from '../LimitedPlan/popup/AddOrderLimitedPlanPopup'
+import AddTimeLimitedPlanPopup from '@/views/Plan/LimitedPlan/popup/AddTimeLimitedPlanPopup'
+import AddRelationPopup from '../LimitedPlan/popup/AddRelationPopup'
+import RemovePlanPopup from '../LimitedPlan/popup/RemovePlanPopup'
+import RemoveRelationPopup from '../LimitedPlan/popup/RemoveRelationPopup'
+import UpdateOrderLimitedPlanPopup from '../LimitedPlan/popup/UpdateOrderLimitedPlanPopup'
+import UpdateTimeLimitedPlanPopup from '@/views/Plan/LimitedPlan/popup/UpdateTimeLimitedPlanPopup'
+import UpdateRelationPopup from '@/views/Plan/LimitedPlan/popup/UpdateRelationPopup'
+import ReadonlySubTasks from '@/components/ReadonlySubTasks'
 import TimeManager from '@/utils/time'
 
 export default {
@@ -149,7 +190,8 @@ export default {
     RemoveRelationPopup,
     UpdateOrderLimitedPlanPopup,
     UpdateRelationPopup,
-    UpdateTimeLimitedPlanPopup
+    UpdateTimeLimitedPlanPopup,
+    ReadonlySubTasks
   },
   setup () {
     const showAddOrderLimitedPlanPopup = ref(false)
@@ -163,8 +205,11 @@ export default {
 
     const type = ref(-1)
     const updateType = (id) => {
-      const i = id[0]
-      switch (i) {
+      if (typeof id === 'number') { // 无限制计划
+        type.value = 2
+        return
+      }
+      switch (id[0]) {
         case 't': // 时间限制计划
           type.value = 0
           return
@@ -172,7 +217,10 @@ export default {
           type.value = 1
           return
         case 'r': // 关系
-          type.value = 2
+          type.value = 3
+          return
+        case 'w': // 周、月计划
+          type.value = 4
           return
         default: // 默认值
           type.value = -1

@@ -2,92 +2,17 @@ import {
   getUrl,
   addPlanUrl, addRelationUrl,
   removePlanUrl, removeRelationUrl,
-  updateTimePlanUrl, updateOrderPlanUrl, updateRelationUrl
-} from '@/api/plan/day'
+  updatePlanUrl, updateRelationUrl, updatePositionUrl
+} from '@/api/plan/dateTime'
 import axios from 'axios'
 import { findElement, removeElement } from '@/utils/array'
-import taskType from '@/store/taskType'
+import { parsePlanId2Number } from '@/utils'
 
 const state = () => ({
-  orderLimitedPlanSet: [{
-    id: 'o1',
-    name: 'a',
-    pos: {
-      x: 100,
-      y: 200
-    }
-  }, {
-    id: 'o2',
-    name: 'b',
-    pos: {
-      x: 200,
-      y: 300
-    }
-  }, {
-    id: 'o3',
-    name: 'c',
-    pos: {
-      x: 300,
-      y: 400
-    }
-  }, {
-    id: 'o4',
-    name: 'd',
-    pos: {
-      x: 400,
-      y: 500
-    }
-  }, {
-    id: 'o5',
-    name: 'e',
-    pos: {
-      x: 600,
-      y: 700
-    }
-  }, {
-    id: 'o6',
-    name: 'f',
-    pos: {
-      x: 800,
-      y: 900
-    }
-  }],
-  timeLimitedPlanSet: [{
-    id: 't1',
-    name: 'aa',
-    startTime: ['', '8:02'],
-    endTime: ['9:00']
-  }, {
-    startTime: ['10:00', '11:30'],
-    startType: 0,
-    endTime: ['12:20', '13:10'],
-    endType: 1,
-    id: 't2',
-    name: 'bb'
-  }, {
-    startTime: ['14:00'],
-    startType: 0,
-    endTime: [],
-    endType: [],
-    id: 't3',
-    name: 'cc'
-  }, {
-    startTime: [],
-    startType: [],
-    endTime: ['15:50'],
-    endType: 1,
-    id: 't4',
-    name: 'dd'
-  }],
-  planRelation: {
-    o1: ['o3', 't1'],
-    o2: ['o3'],
-    o3: ['o4', 'o5'],
-    o4: ['o6'],
-    o5: ['o6'],
-    o6: [],
-    t1: []
-  }
+  orderLimitedPlanSet: [],
+  timeLimitedPlanSet: [],
+  planRelation: {},
+  date: null
 })
 
 const mutations = {
@@ -98,6 +23,9 @@ const mutations = {
     state.timeLimitedPlanSet = data.timeLimitedPlanSet
     state.orderLimitedPlanSet = data.orderLimitedPlanSet
     state.planRelation = data.planRelation
+  },
+  setDate (state, date) {
+    state.date = date
   },
   addOrderPlan (state, plan) {
     state.orderLimitedPlanSet.push(plan)
@@ -162,7 +90,7 @@ const actions = {
     return new Promise(resolve => {
       axios.get(getUrl, {
         params: {
-          date: String(date)
+          date: String(date.getTime())
         }
       })
         .then(res => {
@@ -177,7 +105,9 @@ const actions = {
                 name: item.planName,
                 x: item.x,
                 y: item.y,
-                time: item.expectedTime
+                time: item.expectedTime,
+                taskType: item.typeList,
+                subTasks: item.subTasks
               }
             })
             timeLimitedPlanSet = timeLimitedPlanSet.map(item => {
@@ -192,7 +122,9 @@ const actions = {
                   item.expectedEndTimeBegin ? new Date(Number(item.expectedEndTimeBegin)) : null,
                   item.expectedEndTimeEnd ? new Date(Number(item.expectedEndTimeEnd)) : null
                 ],
-                time: item.expectedTime
+                time: item.expectedTime,
+                taskType: item.typeList,
+                subTasks: item.subTasks
               }
             })
 
@@ -203,10 +135,7 @@ const actions = {
               timeLimitedPlanSet,
               planRelation
             })
-
-            console.log(orderLimitedPlanSet,
-              timeLimitedPlanSet,
-              planRelation)
+            commit('setDate', date)
 
             resolve()
           }
@@ -215,8 +144,13 @@ const actions = {
   },
   addOrderPlan ({ commit }, plan) {
     return new Promise(resolve => {
-      plan.taskType = taskType[taskType.length - 1]
-      axios.post(addPlanUrl, plan)
+      const postPlan = {
+        ...plan,
+        taskType: { id: plan.taskType[plan.taskType.length - 1] },
+        planName: plan.name
+      }
+      console.log(postPlan)
+      axios.post(addPlanUrl, postPlan)
         .then(res => {
           if (res.status === 200) {
             const id = 'o' + res.data
@@ -228,11 +162,16 @@ const actions = {
   },
   addTimePlan ({ commit }, plan) {
     return new Promise(resolve => {
-      plan.taskType = taskType[taskType.length - 1]
-      const expectedTime = plan.time
-      delete plan.time
-      plan.expectedTime = expectedTime
-      axios.post(addPlanUrl, plan)
+      const postPlan = {
+        ...plan,
+        taskType: { id: plan.taskType[plan.taskType.length - 1] },
+        expectedStartTimeBegin: plan.startTime[0] ? String(plan.startTime[0].getTime()) : null,
+        expectedStartTimeEnd: plan.startTime[1] ? String(plan.startTime[1].getTime()) : null,
+        expectedEndTimeBegin: plan.endTime[0] ? String(plan.endTime[0].getTime()) : null,
+        expectedEndTimeEnd: plan.endTime[1] ? String(plan.endTime[1].getTime()) : null,
+        expectedTime: plan.time
+      }
+      axios.post(addPlanUrl, postPlan)
         .then(res => {
           if (res.status === 200) {
             const id = 't' + res.data
@@ -244,14 +183,13 @@ const actions = {
   },
   addRelation ({ commit }, relation) {
     return new Promise(resolve => {
-      const sendRelation = {
+      const postRelation = {
         relation: [
           Number(Object.keys(relation)[0].substr(1)),
           Number(Object.values(relation)[0].substr(1))
         ]
       }
-      console.log(sendRelation)
-      axios.post(addRelationUrl, sendRelation)
+      axios.post(addRelationUrl, postRelation)
         .then(res => {
           if (res.status === 200) {
             commit('addRelation', relation)
@@ -260,10 +198,10 @@ const actions = {
         })
     })
   },
-  removePlan ({ commit }, id) {
+  removePlan ({ commit, state }, id) {
     return new Promise(resolve => {
-      id = Number(id.substr(1))
-      axios.post(removePlanUrl, { id })
+      const postId = parsePlanId2Number(id)
+      axios.post(removePlanUrl, { id: postId, date: String(state.date.getTime()) })
         .then(res => {
           if (res.status === 200) {
             commit('removePlan', id)
@@ -282,7 +220,13 @@ const actions = {
   },
   updateOrderPlan ({ commit }, plan) {
     return new Promise(resolve => {
-      axios.post(updateOrderPlanUrl, plan)
+      const postPlan = {
+        ...plan,
+        taskType: { id: plan.taskType[plan.taskType.length - 1] },
+        id: parsePlanId2Number(plan.id),
+        planName: plan.name
+      }
+      axios.post(updatePlanUrl, postPlan)
         .then(res => {
           if (res.status === 200) {
             commit('updateOrderPlan', plan)
@@ -293,7 +237,13 @@ const actions = {
   },
   updateTimePlan ({ commit }, plan) {
     return new Promise(resolve => {
-      axios.post(updateTimePlanUrl, plan)
+      const postPlan = {
+        ...plan,
+        taskType: { id: plan.taskType[plan.taskType.length - 1] },
+        id: parsePlanId2Number(plan.id),
+        planName: plan.name
+      }
+      axios.post(updatePlanUrl, postPlan)
         .then(res => {
           if (res.status === 200) {
             commit('updateTimePlan', plan)
@@ -313,11 +263,9 @@ const actions = {
         })
     })
   },
-  updatePosition (context, payload) {
-    const { plan, x, y } = payload
-    plan.pos.x = x
-    plan.pos.y = y
-    // axios
+  updatePosition ({ commit }, payload) {
+    const { id, x, y } = payload
+    axios.post(updatePositionUrl, { id: Number(id.substr(1)), x: Math.floor(x), y: Math.floor(y) })
   }
 }
 

@@ -7,7 +7,7 @@ class timeLimitedPlanDrawer extends limitedPlanDrawer {
   static planSet
 
   static render () {
-    this.planSet = this.store.state.limitedPlanDay.timeLimitedPlanSet
+    this.planSet = this.store.state.dateTimePlan.timeLimitedPlanSet
     this.renderPlans()
   }
 
@@ -78,7 +78,6 @@ class timeLimitedPlanDrawer extends limitedPlanDrawer {
   }
 
   static transformToRangeNode (plan, time) {
-    console.log(time)
     const startTime = time[0]
     const endTime = time[1]
 
@@ -159,7 +158,6 @@ class timeLimitedPlanDrawer extends limitedPlanDrawer {
   */
 
   static removePlan (id) {
-
   }
 
   /*
@@ -167,7 +165,7 @@ class timeLimitedPlanDrawer extends limitedPlanDrawer {
   */
 
   static updatePlan (plan) {
-
+    console.log(plan)
   }
 
   static updatePosition (node) {

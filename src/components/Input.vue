@@ -1,5 +1,6 @@
 <template>
   <input
+    :value="modelValue"
     ref="inputElement"
     :class="[inputClass]"
     @input="handleInput"
@@ -36,7 +37,7 @@ export default {
       const reg = /^\s*[0-9]*\s*$/
       if (reg.test(input)) {
         setDefault()
-        return Number(input)
+        return isNaN(parseInt(input)) ? null : parseInt(input)
       } else {
         setError()
         return input

@@ -1,7 +1,7 @@
 <template>
   <div id="task-type">
     <div v-if="readonly">
-      {{ getTaskTypeFullName(data) }}
+      {{ getTaskTypeFullName(modelValue) }}
     </div>
     <el-cascader
       v-else
@@ -9,7 +9,7 @@
       :options="options"
       :props="{ checkStrictly: true }"
       clearable
-      size="mini"
+      :size="size"
     />
   </div>
 </template>
@@ -29,6 +29,10 @@ export default {
     readonly: {
       type: Boolean,
       default: false
+    },
+    size: {
+      type: String,
+      default: ''
     }
   },
   emits: ['update:modelValue'],

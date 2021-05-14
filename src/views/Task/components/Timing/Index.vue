@@ -1,6 +1,6 @@
 <template>
   <div id="task-timing">
-    <div>
+    <div id="task-info">
       <TaskType
         v-model="taskType"
         :readonly="true"
@@ -15,10 +15,11 @@
         v-for="(item, index) in subTasks"
         :key="index"
         class="sub-task"
+        :class="[currentSubTaskIndex===index?'selected':'']"
       >
         <i
           class="el-icon-right"
-          @click="shift(item)"
+          @click="shift(item, index)"
         />
         <span>{{ item.name }}</span>
         <span>已进行</span>
@@ -34,6 +35,8 @@
       type="circle"
       :percentage="percentage"
       :status="processStatus"
+      :width="400"
+      :stroke-width="20"
     >
       <span class="time">
         {{ time }}
@@ -58,12 +61,12 @@
         完成
       </el-button>
     </div>
-    <el-input
-      v-model="note"
-      type="textarea"
-      :rows="10"
-      placeholder="笔记"
-    />
+    <!--    <el-input-->
+    <!--      v-model="note"-->
+    <!--      type="textarea"-->
+    <!--      :rows="10"-->
+    <!--      placeholder="笔记"-->
+    <!--    />-->
   </div>
 </template>
 
@@ -84,7 +87,9 @@ export default {
     const route = useRoute()
     const router = useRouter()
 
-    const { name, time, expectedTime } = route.params
+    const name = route.params.name
+    const time = parseInt(route.params.time)
+    const expectedTime = parseInt(route.params.expectedTime)
     const taskType = JSON.parse(route.params.taskType)
     const subTasks = reactive(JSON.parse(route.params.subTasks))
     const note = ref('')
@@ -106,12 +111,16 @@ export default {
       return subTasks[0]
     })()
 
-    const shift = (item) => {
+    const currentSubTaskIndex = ref(0)
+
+    const shift = (item, index) => {
       if (isWorking.value) {
         pause()
+        currentSubTaskIndex.value = index
         currentTask = item
         start()
       } else {
+        currentSubTaskIndex.value = index
         currentTask = item
       }
     }
@@ -164,9 +173,9 @@ export default {
       if (!isWorking.value && timeSegment.value < 60) return
       track.push({
         name,
-        time: currentTask.time,
-        startTime,
-        endTime
+        time: timeSegment.value,
+        startTime: startTime,
+        endTime: endTime
       })
     }
 
@@ -207,27 +216,71 @@ export default {
       pause,
       finish,
       shift,
-      getMinute: TimeManager.second2Minute
+      getMinute: TimeManager.second2Minute,
+      currentSubTaskIndex
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
-@s: e('/');
+@import "/src/assets/css/text.less";
 
 #task-timing {
-  //display: grid;
-  height: 100%;
+  //display: flex;
+  //flex-direction: column;
+  //width: 100%;
+  //height: 100%;
+  margin: 1em;
+
+  #task-info{
+    display: flex;
+    flex-direction: row;
+    margin: 1em 0;
+    align-items: center;
+
+    >:nth-child(1){
+      margin-right: 1em;
+    }
+    >:nth-child(2){
+      margin-right: 1em;
+    }
+    >:nth-child(4){
+      margin: 0 0.3em;
+    }
+  }
 
   .sub-task{
     display: flex;
     align-items: center;
+    transition: 200ms;
+    margin: 1em 0;
+    font-weight: bold;
 
     i{
       cursor: pointer;
       line-height: unset;
     }
+
+    >:nth-child(2){
+      margin: 0 1em;
+    }
+
+    >:nth-child(4){
+      margin: 0 0.3em;
+    }
+
+    >:nth-child(5){
+      margin-right: 1em;
+    }
+
+    >:nth-child(7){
+      margin: 0 0.3em;
+    }
   }
+}
+
+.selected{
+  color: #409EFF;
 }
 </style>

@@ -27,7 +27,7 @@ const getNameByArray = (idArr) => {
   return nameArr
 }
 
-export function getTaskTypeName (type) {
+export function getTaskTypeRootName (type) {
   return type
 }
 

@@ -7,7 +7,7 @@
   </el-button>
   <div
     :class="[showPopup?'down':'up']"
-    id="date-select"
+    id="panel"
   >
     <div>
       <el-radio-group
@@ -37,37 +37,41 @@
     </div>
     <div>
       <transition name="fade">
-        <DatePicker
-          v-show="repeatType===0"
-          v-model="dates"
-          @input="onDateChange"
-          class="absolute"
-          is-range
-        />
+        <div id="date">
+          <DatePicker
+            v-show="repeatType===0"
+            v-model="dates"
+            @input="onDateChange"
+            is-range
+          />
+        </div>
       </transition>
       <transition name="fade">
         <div
           v-show="repeatType===2"
-          class="absolute"
+          id="week"
         >
           <span
-            v-for="index in 7"
+            v-for="(item, index) in ['一','二','三','四','五','六','日']"
             :key="index"
-            class="date"
+            @click="onClickWeekDay(index)"
+            class="week-day"
+            :class="[weekDay[index]?'active':'default']"
           >
-            {{ index }}
+            {{ item }}
           </span>
         </div>
       </transition>
       <transition name="fade">
         <div
           v-show="repeatType===3"
-          class="absolute"
+          id="month"
         >
           <span
             v-for="index in 31"
             :key="index"
-            class="date"
+            @click="onClickMonthDay(index)"
+            class="month-day"
           >
             {{ index }}
           </span>
@@ -78,7 +82,7 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { DatePicker } from 'v-calendar'
 
 export default {
@@ -134,13 +138,33 @@ export default {
       }
     }
 
+    const weekDay = reactive(new Array(7))
+    for (let i = 0; i < weekDay.length; i++) {
+      weekDay[i] = false
+    }
+    const onClickWeekDay = (i) => {
+      weekDay[i] = !weekDay[i]
+    }
+
+    const monthDay = reactive(new Array(31))
+    for (let i = 0; i < monthDay.length; i++) {
+      monthDay[i] = false
+    }
+    const onClickMonthDay = (i) => {
+      monthDay[i] = !monthDay[i]
+    }
+
     return {
       dates,
       showPopup,
       onClickDate,
       repeatType,
       onChangeRepeatType,
-      onDateChange
+      onDateChange,
+      weekDay,
+      monthDay,
+      onClickWeekDay,
+      onClickMonthDay
     }
   }
 }
@@ -155,14 +179,19 @@ export default {
   width: 7em;
 }
 
-#date-select {
+/deep/ .vc-container{
+  border: solid 0 transparent;
+  border-radius: 0.4em;
+}
+
+#panel {
   display: flex;
   flex-direction: column;
   position: absolute;
-  top: 20px;
+  top: 30px;
   z-index: 99;
   overflow: hidden;
-  width: 252px;
+  width: 250px;
 
   > div {
     display: flex;
@@ -174,32 +203,69 @@ export default {
     }
   }
 
+  >:first-child{
+    background-color: white;
+    border-radius: 0.4em;
+  }
+
   .transition {
     position: absolute;
     top: 30px;
     left: 0;
   }
-}
 
-.absolute{
-  position: absolute;
-  top: 30px;
-  left: 0;
-}
+  #date, #week, #month{
+    display: flex;
+  }
 
-.date{
-  padding: 0.5em;
-  border: solid 2px #646464;
-  border-radius: 2px;
-  margin: 0.2em;
+  .week-day, .month-day{
+    cursor: pointer;
+    transition: 200ms;
+  }
 
-  &:hover{
-    background-color: blue;
+  #week{
+    border-radius: 0.4em;
+    background-color: white;
+
+    >:first-child{
+      margin-left: 0;
+    }
+    >:last-child{
+      margin-right: 0;
+    }
+  }
+
+  .week-day{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 28px;
+    height: 28px;
+    margin: 0 4.5px;
+    font-size: small;
+    border-radius: 0.4em;
+
+    &::selection{
+      background-color: transparent;
+    }
   }
 }
 
+.default{
+  background-color: white;
+  color: #606266;
+  box-shadow: 0 0 3px rgba(100, 100, 100, 0.42);
+}
+
+.active{
+  background-color: #409EFF;
+  color: white;
+  box-shadow: 0 0 3px rgba(64, 158, 255, 0.68);
+}
+
 .down {
-  height: 500px;
+  height: 300px;
   transition: height 0.3s ease-in 0s;
 }
 

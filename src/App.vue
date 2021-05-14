@@ -38,7 +38,7 @@ export default {
 
 html {
   height: 100%;
-  background-color: dimgrey;
+  background-color: whitesmoke;
 }
 
 body {
